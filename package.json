@@ -1,0 +1,14 @@
+{
+  "name": "babel-plugin-i18n",
+  "version": "0.0.0",
+  "description": "A rule based i18n babel plugin",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/panlina/babel-plugin-i18n.git"
+  },
+  "author": "Jack Lu <jacklu@jacklu.me>",
+  "license": "ISC",
+  "peerDependencies": {
+    "@babel/core": "7"
+  }
+}
