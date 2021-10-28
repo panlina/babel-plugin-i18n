@@ -10,5 +10,12 @@
   "license": "ISC",
   "peerDependencies": {
     "@babel/core": "7"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "mocha": "^9.1.3"
+  },
+  "scripts": {
+    "test": "mocha"
   }
 }
