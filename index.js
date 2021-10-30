@@ -10,17 +10,21 @@ module.exports = function ({ types: t }) {
 		},
 		visitor: {
 			StringLiteral(path) {
+				if (path.node.$$i18n) return;
 				if (!containsChinese(path.node.value)) return;
 				path.replaceWith(
 					t.callExpression(
 						t.identifier('t'),
-						[languageExpression, t.stringLiteral(sourceFileName), t.stringLiteral('StringLiteral'), path.node]
+						[languageExpression, t.stringLiteral(sourceFileName), t.stringLiteral('StringLiteral'), skip(path.node)]
 					)
 				);
-				path.skip();
 			}
 		}
 	};
+	function skip(node) {
+		node.$$i18n = true;
+		return node;
+	}
 };
 function containsChinese(text) {
 	return /[\u4e00-\u9fa5]/.test(text);
