@@ -18,6 +18,18 @@ module.exports = function ({ types: t }) {
 						[languageExpression, t.stringLiteral(sourceFileName), t.stringLiteral('StringLiteral'), skip(path.node)]
 					)
 				);
+			},
+			TemplateLiteral(path) {
+				if (!path.node.quasis.some(quasi => containsChinese(quasi.value.cooked))) return;
+				path.replaceWith(
+					t.callExpression(
+						t.identifier('t'),
+						[languageExpression, t.stringLiteral(sourceFileName), t.stringLiteral('TemplateLiteral'),
+							skip(t.stringLiteral(path.node.quasis.map(quasi => quasi.value.cooked).join("{}"))),
+							t.arrayExpression(path.node.expressions)
+						]
+					)
+				);
 			}
 		}
 	};
