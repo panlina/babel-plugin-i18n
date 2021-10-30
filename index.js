@@ -14,7 +14,7 @@ module.exports = function ({ types: t }) {
 				path.replaceWith(
 					t.callExpression(
 						t.identifier('t'),
-						[languageExpression, t.stringLiteral(sourceFileName), path.node]
+						[languageExpression, t.stringLiteral(sourceFileName), t.stringLiteral('StringLiteral'), path.node]
 					)
 				);
 				path.skip();

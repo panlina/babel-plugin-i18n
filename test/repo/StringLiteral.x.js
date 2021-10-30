@@ -1,1 +1,1 @@
-t(localStorage.language, "StringLiteral.js", "确定");
+t(localStorage.language, "StringLiteral.js", "StringLiteral", "确定");
