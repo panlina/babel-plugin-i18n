@@ -25,3 +25,12 @@ it('jsx element', function () {
 	var expected = babel.transformFileSync('./JSXElement.x.js', { parserOpts: { plugins: ['jsx'] } });
 	assert.equal(result.code, expected.code);
 });
+it('jsx fragment', function () {
+	var result = babel.transformFileSync("./JSXFragment.js", {
+		plugins: [require('..')],
+		parserOpts: { plugins: ['jsx'] },
+		generatorOpts: { jsescOption: { minimal: true } }
+	});
+	var expected = babel.transformFileSync('./JSXFragment.x.js', { parserOpts: { plugins: ['jsx'] } });
+	assert.equal(result.code, expected.code);
+});

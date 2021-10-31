@@ -5,11 +5,12 @@ module.exports = function ({ types: t }) {
 	var config = fs.existsSync("./i18n.config.js") ? require(path.join(process.cwd(), './i18n.config.js')) : {};
 	var languageExpression = config.languageExpression(t);
 	var sourceFileName;
+	var visitor;
 	return {
 		pre(state) {
 			sourceFileName = path.relative(state.opts.root, state.opts.filename);
 		},
-		visitor: {
+		visitor: visitor = {
 			StringLiteral(path) {
 				if (path.node.$$i18n) return;
 				if (!containsChinese(path.node.value)) return;
@@ -55,6 +56,10 @@ module.exports = function ({ types: t }) {
 						]
 					)
 				);
+			},
+			JSXFragment(path) {
+				visitor.JSXElement.apply(this, arguments);
+				path.node.arguments[2].value = 'JSXFragment';
 			}
 		}
 	};
