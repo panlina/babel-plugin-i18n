@@ -17,5 +17,8 @@
   },
   "scripts": {
     "test": "mocha"
+  },
+  "dependencies": {
+    "glob": "^7.2.0"
   }
 }
