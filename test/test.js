@@ -21,8 +21,11 @@ it('template literal', function () {
 		plugins: [require('..')],
 		generatorOpts: { jsescOption: { minimal: true } }
 	});
-	var expected = babel.transformFileSync('./TemplateLiteral.x.js');
-	assert.equal(result.code, expected.code);
+	var n = 3;
+	var context = { i18n: dictionary, localStorage: { language: 'en-US' }, n: n };
+	vm.createContext(context);
+	vm.runInContext(t, context);
+	assert.equal(vm.runInContext(result.code, context), `${n} message(s)`);
 });
 it('jsx element', function () {
 	var result = babel.transformFileSync("./JSXElement.js", {
