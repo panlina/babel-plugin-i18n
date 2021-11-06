@@ -52,10 +52,36 @@ module.exports = function ({ types: t }) {
 								path.node.children
 									.filter(child => child.type != 'JSXText')
 									.map(child => child.type == 'JSXExpressionContainer' ? child.expression : child)
-							)
+							),
+							path.node.type == 'JSXFragment' ?
+								t.identifier('undefined') :
+								getComponentFromNode(path.node.openingElement.name),
+							path.node.type == 'JSXFragment' ?
+								t.identifier('undefined') :
+								t.objectExpression(
+									path.node.openingElement.attributes.map(attribute =>
+										t.objectProperty(
+											t.stringLiteral(attribute.name.name),
+											attribute.value ?
+												attribute.value.type == 'JSXExpressionContainer' ?
+													attribute.value.expression :
+													attribute.value :
+												t.identifier('undefined')
+										)
+									)
+								)
 						]
 					)
 				);
+				function getComponentFromNode(node) {
+					if (node.type == 'JSXIdentifier')
+						if (node.name.toLowerCase() == node.name)
+							return t.stringLiteral(node.name);
+						else
+							return t.identifier(node.name);
+					else if (node.type == 'JSXMemberExpression')
+						return t.identifier(`${getComponentFromNode(node.object)}.${getComponentFromNode(node.property)}`);
+				}
 			},
 			JSXFragment(path) {
 				visitor.JSXElement.apply(this, arguments);

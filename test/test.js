@@ -27,14 +27,39 @@ it('template literal', function () {
 	vm.runInContext(t, context);
 	assert.equal(vm.runInContext(result.code, context), `${n} message(s)`);
 });
+var React = {
+	createElement(type, props, children) {
+		return {
+			type: type,
+			props: props,
+			children: children
+		};
+	}
+};
+var Icon = function () { };
 it('jsx element', function () {
 	var result = babel.transformFileSync("./JSXElement.js", {
+		presets: [require('@babel/preset-react')],
 		plugins: [require('..')],
 		parserOpts: { plugins: ['jsx'] },
 		generatorOpts: { jsescOption: { minimal: true } }
 	});
-	var expected = babel.transformFileSync('./JSXElement.x.js', { parserOpts: { plugins: ['jsx'] } });
-	assert.equal(result.code, expected.code);
+	var context = {
+		i18n: dictionary,
+		localStorage: { language: 'en-US' },
+		React: React,
+		Icon: Icon
+	};
+	vm.createContext(context);
+	vm.runInContext(t, context);
+	assert.deepEqual(
+		vm.runInContext(result.code, context),
+		React.createElement("div", {}, [
+			"",
+			React.createElement(Icon, { type: "plus" }),
+			"New"
+		])
+	);
 });
 it('jsx fragment', function () {
 	var result = babel.transformFileSync("./JSXFragment.js", {
