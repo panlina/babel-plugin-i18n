@@ -17,7 +17,7 @@ module.exports = function ({ types: t }) {
 				path.replaceWith(
 					t.callExpression(
 						t.identifier('t'),
-						[languageExpression, t.stringLiteral(sourceFileName), t.stringLiteral('StringLiteral'), skip(path.node)]
+						[languageExpression, skip(t.stringLiteral(sourceFileName)), t.stringLiteral('StringLiteral'), skip(path.node)]
 					)
 				);
 			},
@@ -26,7 +26,7 @@ module.exports = function ({ types: t }) {
 				path.replaceWith(
 					t.callExpression(
 						t.identifier('t'),
-						[languageExpression, t.stringLiteral(sourceFileName), t.stringLiteral('TemplateLiteral'),
+						[languageExpression, skip(t.stringLiteral(sourceFileName)), t.stringLiteral('TemplateLiteral'),
 							skip(t.stringLiteral(path.node.quasis.map(quasi => quasi.value.cooked).join("{}"))),
 							t.arrayExpression(path.node.expressions)
 						]
@@ -42,7 +42,7 @@ module.exports = function ({ types: t }) {
 				path.replaceWith(
 					t.callExpression(
 						t.identifier('t'),
-						[languageExpression, t.stringLiteral(sourceFileName),
+						[languageExpression, skip(t.stringLiteral(sourceFileName)),
 							t.stringLiteral(path.node.type),
 							skip(t.stringLiteral(path.node.children.map(child =>
 								child.type == 'JSXText' ?
