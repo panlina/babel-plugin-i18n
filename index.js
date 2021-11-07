@@ -42,7 +42,8 @@ module.exports = function ({ types: t }) {
 				path.replaceWith(
 					t.callExpression(
 						t.identifier('t'),
-						[languageExpression, t.stringLiteral(sourceFileName), t.stringLiteral('JSXElement'),
+						[languageExpression, t.stringLiteral(sourceFileName),
+							t.stringLiteral(path.node.type),
 							skip(t.stringLiteral(path.node.children.map(child =>
 								child.type == 'JSXText' ?
 									removeJSXWhitespaces(child.value) :
@@ -85,7 +86,6 @@ module.exports = function ({ types: t }) {
 			},
 			JSXFragment(path) {
 				visitor.JSXElement.apply(this, arguments);
-				path.node.arguments[2].value = 'JSXFragment';
 			}
 		}
 	};
