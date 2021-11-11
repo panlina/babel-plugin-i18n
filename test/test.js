@@ -16,16 +16,33 @@ it('string literal', function () {
 	vm.runInContext(t, context);
 	assert.equal(vm.runInContext(result.code, context), "OK");
 });
-it('template literal', function () {
-	var result = babel.transformFileSync("./TemplateLiteral.js", {
-		plugins: [require('..')],
-		generatorOpts: { jsescOption: { minimal: true } }
+describe('template literal', function () {
+	it('template literal', function () {
+		var result = babel.transformFileSync("./TemplateLiteral.js", {
+			plugins: [require('..')],
+			generatorOpts: { jsescOption: { minimal: true } }
+		});
+		var n = 3;
+		var context = { i18n: dictionary, localStorage: { language: 'en-US' }, n: n };
+		vm.createContext(context);
+		vm.runInContext(t, context);
+		assert.equal(vm.runInContext(result.code, context), `${n} message(s)`);
 	});
-	var n = 3;
-	var context = { i18n: dictionary, localStorage: { language: 'en-US' }, n: n };
-	vm.createContext(context);
-	vm.runInContext(t, context);
-	assert.equal(vm.runInContext(result.code, context), `${n} message(s)`);
+	it('{}的{}属性', function () {
+		var result = babel.transformFileSync("./TemplateLiteral.{}的{}属性.js", {
+			plugins: [require('..')]
+		});
+		var object = 'customer', property = 'name';
+		var context = {
+			i18n: dictionary,
+			localStorage: { language: 'en-US' },
+			object: object,
+			property: property
+		};
+		vm.createContext(context);
+		vm.runInContext(t, context);
+		assert.equal(vm.runInContext(result.code, context), `${property} property of ${object}`);
+	});
 });
 var React = {
 	createElement(type, props, children) {
@@ -38,51 +55,77 @@ var React = {
 	Fragment: function () { }
 };
 var Icon = function () { };
-it('jsx element', function () {
-	var result = babel.transformFileSync("./JSXElement.js", {
-		presets: [require('@babel/preset-react')],
-		plugins: [require('..')],
-		parserOpts: { plugins: ['jsx'] },
-		generatorOpts: { jsescOption: { minimal: true } }
+describe('jsx element', function () {
+	it('jsx element', function () {
+		var result = babel.transformFileSync("./JSXElement.js", {
+			presets: [require('@babel/preset-react')],
+			plugins: [require('..')],
+			parserOpts: { plugins: ['jsx'] },
+			generatorOpts: { jsescOption: { minimal: true } }
+		});
+		var context = {
+			i18n: dictionary,
+			localStorage: { language: 'en-US' },
+			React: React,
+			Icon: Icon
+		};
+		vm.createContext(context);
+		vm.runInContext(t, context);
+		assert.deepEqual(
+			vm.runInContext(result.code, context),
+			React.createElement("div", {}, [
+				"",
+				React.createElement(Icon, { type: "plus" }),
+				"New"
+			])
+		);
 	});
-	var context = {
-		i18n: dictionary,
-		localStorage: { language: 'en-US' },
-		React: React,
-		Icon: Icon
-	};
-	vm.createContext(context);
-	vm.runInContext(t, context);
-	assert.deepEqual(
-		vm.runInContext(result.code, context),
-		React.createElement("div", {}, [
-			"",
-			React.createElement(Icon, { type: "plus" }),
-			"New"
-		])
-	);
-});
-it('jsx fragment', function () {
-	var result = babel.transformFileSync("./JSXFragment.js", {
-		presets: [require('@babel/preset-react')],
-		plugins: [require('..')],
-		parserOpts: { plugins: ['jsx'] },
-		generatorOpts: { jsescOption: { minimal: true } }
+	it('jsx fragment', function () {
+		var result = babel.transformFileSync("./JSXFragment.js", {
+			presets: [require('@babel/preset-react')],
+			plugins: [require('..')],
+			parserOpts: { plugins: ['jsx'] },
+			generatorOpts: { jsescOption: { minimal: true } }
+		});
+		var context = {
+			i18n: dictionary,
+			localStorage: { language: 'en-US' },
+			React: React,
+			Icon: Icon
+		};
+		vm.createContext(context);
+		vm.runInContext(t, context);
+		assert.deepEqual(
+			vm.runInContext(result.code, context),
+			React.createElement(React.Fragment, {}, [
+				"",
+				React.createElement(Icon, { type: "plus" }),
+				"New"
+			])
+		);
 	});
-	var context = {
-		i18n: dictionary,
-		localStorage: { language: 'en-US' },
-		React: React,
-		Icon: Icon
-	};
-	vm.createContext(context);
-	vm.runInContext(t, context);
-	assert.deepEqual(
-		vm.runInContext(result.code, context),
-		React.createElement(React.Fragment, {}, [
-			"",
-			React.createElement(Icon, { type: "plus" }),
-			"New"
-		])
-	);
+	it('{}的{}属性', function () {
+		var result = babel.transformFileSync("./JSXElement.{}的{}属性.js", {
+			presets: [require('@babel/preset-react')],
+			plugins: [require('..')],
+			parserOpts: { plugins: ['jsx'] },
+			generatorOpts: { jsescOption: { minimal: true } }
+		});
+		var object = 'customer', property = 'name';
+		var context = {
+			i18n: dictionary,
+			localStorage: { language: 'en-US' },
+			React: React,
+			object: object,
+			property: property
+		};
+		vm.createContext(context);
+		vm.runInContext(t, context);
+		assert.deepEqual(
+			vm.runInContext(result.code, context),
+			React.createElement("span", {}, [
+				"", property, " property of ", object, ""
+			])
+		);
+	});
 });
