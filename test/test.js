@@ -129,3 +129,48 @@ describe('jsx element', function () {
 		);
 	});
 });
+describe('untranslated', function () {
+	it('string literal', function () {
+		var result = babel.transformFileSync("./untranslated.StringLiteral.js", {
+			plugins: [require('..')]
+		});
+		var context = { i18n: dictionary, localStorage: { language: 'en-US' } };
+		vm.createContext(context);
+		vm.runInContext(t, context);
+		assert.equal(vm.runInContext(result.code, context), "伐");
+	});
+	it('template literal', function () {
+		var result = babel.transformFileSync("./untranslated.TemplateLiteral.js", {
+			plugins: [require('..')],
+			generatorOpts: { jsescOption: { minimal: true } }
+		});
+		var a = "好";
+		var context = { i18n: dictionary, localStorage: { language: 'en-US' }, a: a };
+		vm.createContext(context);
+		vm.runInContext(t, context);
+		assert.equal(vm.runInContext(result.code, context), `${a}伐`);
+	});
+	it('jsx element', function () {
+		var result = babel.transformFileSync("./untranslated.JSXElement.js", {
+			presets: [require('@babel/preset-react')],
+			plugins: [require('..')],
+			parserOpts: { plugins: ['jsx'] },
+			generatorOpts: { jsescOption: { minimal: true } }
+		});
+		var a = "好";
+		var context = {
+			i18n: dictionary,
+			localStorage: { language: 'en-US' },
+			React: React,
+			a: a
+		};
+		vm.createContext(context);
+		vm.runInContext(t, context);
+		assert.deepEqual(
+			vm.runInContext(result.code, context),
+			React.createElement("div", {}, [
+				"", a, "伐"
+			])
+		);
+	});
+});
