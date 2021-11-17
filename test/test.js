@@ -129,6 +129,15 @@ describe('jsx element', function () {
 		);
 	});
 });
+it('ignore', function () {
+	var result = babel.transformFileSync("./ignore.js", {
+		plugins: [require('..')]
+	});
+	var context = { i18n: dictionary, localStorage: { language: 'en-US' } };
+	vm.createContext(context);
+	vm.runInContext(t, context);
+	assert.equal(vm.runInContext(result.code, context), "确定");
+});
 describe('untranslated', function () {
 	it('string literal', function () {
 		var result = babel.transformFileSync("./untranslated.StringLiteral.js", {

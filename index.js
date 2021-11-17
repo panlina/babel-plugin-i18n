@@ -86,6 +86,17 @@ module.exports = function ({ types: t }) {
 			},
 			JSXFragment(path) {
 				visitor.JSXElement.apply(this, arguments);
+			},
+			SequenceExpression(path) {
+				var expressions = path.node.expressions;
+				if (
+					expressions.length == 2
+					&&
+					expressions[0].type == 'StringLiteral'
+					&&
+					expressions[0].value == 'i18n.ignore'
+				)
+					path.skip();
 			}
 		}
 	};
