@@ -19,8 +19,7 @@ it('string literal', function () {
 describe('template literal', function () {
 	it('template literal', function () {
 		var result = babel.transformFileSync("./TemplateLiteral.js", {
-			plugins: [require('..')],
-			generatorOpts: { jsescOption: { minimal: true } }
+			plugins: [require('..')]
 		});
 		var n = 3;
 		var context = { i18n: dictionary, localStorage: { language: 'en-US' }, n: n };
@@ -60,8 +59,7 @@ describe('jsx element', function () {
 		var result = babel.transformFileSync("./JSXElement.js", {
 			presets: [require('@babel/preset-react')],
 			plugins: [require('..')],
-			parserOpts: { plugins: ['jsx'] },
-			generatorOpts: { jsescOption: { minimal: true } }
+			parserOpts: { plugins: ['jsx'] }
 		});
 		var context = {
 			i18n: dictionary,
@@ -84,8 +82,7 @@ describe('jsx element', function () {
 		var result = babel.transformFileSync("./JSXFragment.js", {
 			presets: [require('@babel/preset-react')],
 			plugins: [require('..')],
-			parserOpts: { plugins: ['jsx'] },
-			generatorOpts: { jsescOption: { minimal: true } }
+			parserOpts: { plugins: ['jsx'] }
 		});
 		var context = {
 			i18n: dictionary,
@@ -108,8 +105,7 @@ describe('jsx element', function () {
 		var result = babel.transformFileSync("./JSXElement.{}的{}属性.js", {
 			presets: [require('@babel/preset-react')],
 			plugins: [require('..')],
-			parserOpts: { plugins: ['jsx'] },
-			generatorOpts: { jsescOption: { minimal: true } }
+			parserOpts: { plugins: ['jsx'] }
 		});
 		var object = 'customer', property = 'name';
 		var context = {
@@ -150,8 +146,7 @@ describe('untranslated', function () {
 	});
 	it('template literal', function () {
 		var result = babel.transformFileSync("./untranslated.TemplateLiteral.js", {
-			plugins: [require('..')],
-			generatorOpts: { jsescOption: { minimal: true } }
+			plugins: [require('..')]
 		});
 		var a = "好";
 		var context = { i18n: dictionary, localStorage: { language: 'en-US' }, a: a };
@@ -163,8 +158,7 @@ describe('untranslated', function () {
 		var result = babel.transformFileSync("./untranslated.JSXElement.js", {
 			presets: [require('@babel/preset-react')],
 			plugins: [require('..')],
-			parserOpts: { plugins: ['jsx'] },
-			generatorOpts: { jsescOption: { minimal: true } }
+			parserOpts: { plugins: ['jsx'] }
 		});
 		var a = "好";
 		var context = {
