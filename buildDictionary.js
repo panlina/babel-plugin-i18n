@@ -3,7 +3,7 @@ var glob = require('glob');
 
 module.exports = function () {
 	var dictionary = {};
-	for (var d of glob.sync("**/*.i18n.json"))
+	for (var d of glob.sync("**/{i18n.json,*.i18n.json}"))
 		dictionary[d] = JSON.parse(fs.readFileSync(d, 'utf8'));
 	return dictionary;
 };
