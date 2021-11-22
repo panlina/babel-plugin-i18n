@@ -124,6 +124,28 @@ describe('jsx element', function () {
 			])
 		);
 	});
+	it('space', function () {
+		var result = babel.transformFileSync("./JSXElement.space.js", {
+			presets: [require('@babel/preset-react')],
+			plugins: [require('..')],
+			parserOpts: { plugins: ['jsx'] }
+		});
+		var context = {
+			i18n: dictionary,
+			localStorage: { language: 'en-US' },
+			React: React
+		};
+		vm.createContext(context);
+		vm.runInContext(t, context);
+		assert.deepEqual(
+			vm.runInContext(result.code, context),
+			React.createElement("div", {}, [
+				"  me you you  him",
+				React.createElement("div", null),
+				"it it it"
+			])
+		);
+	});
 });
 it('ignore', function () {
 	var result = babel.transformFileSync("./ignore.js", {
