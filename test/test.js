@@ -199,3 +199,12 @@ describe('untranslated', function () {
 		);
 	});
 });
+it('zh-TW', function () {
+	var result = babel.transformFileSync("./StringLiteral.js", {
+		plugins: [require('..')]
+	});
+	var context = { i18n: dictionary, localStorage: { language: 'zh-TW' } };
+	vm.createContext(context);
+	vm.runInContext(t, context);
+	assert.equal(vm.runInContext(result.code, context), "確定");
+});
