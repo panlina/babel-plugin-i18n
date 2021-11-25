@@ -39,6 +39,7 @@ module.exports = function ({ types: t }) {
 					&&
 					containsChinese(child.value)
 				)) return;
+				reduceStringLiteralExpressions(path.node);
 				path.replaceWith(
 					t.callExpression(
 						t.identifier('t'),
@@ -82,6 +83,18 @@ module.exports = function ({ types: t }) {
 							return t.identifier(node.name);
 					else if (node.type == 'JSXMemberExpression')
 						return t.identifier(`${getComponentFromNode(node.object)}.${getComponentFromNode(node.property)}`);
+				}
+				function reduceStringLiteralExpressions(node) {
+					for (var i in node.children) {
+						var child = node.children[i];
+						if (
+							child.type == 'JSXExpressionContainer' &&
+							child.expression.type == 'StringLiteral' &&
+							child.expression.value == ' '
+						)
+							node.children[i] = t.jsxText(child.expression.value);
+					}
+					return node;
 				}
 			},
 			JSXFragment(path) {

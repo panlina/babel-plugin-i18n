@@ -146,6 +146,27 @@ describe('jsx element', function () {
 			])
 		);
 	});
+	it('space.prettier', function () {
+		var result = babel.transformFileSync("./JSXElement.space.prettier.js", {
+			presets: [require('@babel/preset-react')],
+			plugins: [require('..')]
+		});
+		var context = {
+			i18n: dictionary,
+			localStorage: { language: 'en-US' },
+			React: React
+		};
+		vm.createContext(context);
+		vm.runInContext(t, context);
+		assert.deepEqual(
+			vm.runInContext(result.code, context),
+			React.createElement("p", {}, [
+				"Click ",
+				React.createElement("a", {}, ["here"]),
+				" for detail"
+			])
+		);
+	});
 });
 it('ignore', function () {
 	var result = babel.transformFileSync("./ignore.js", {
