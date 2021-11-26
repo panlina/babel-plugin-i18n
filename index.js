@@ -84,7 +84,7 @@ module.exports = function ({ types: t }) {
 						else
 							return t.identifier(node.name);
 					else if (node.type == 'JSXMemberExpression')
-						return t.identifier(`${getComponentFromNode(node.object)}.${getComponentFromNode(node.property)}`);
+						return t.identifier(`${getComponentFromNode(node.object).name}.${getComponentFromNode(node.property).name}`);
 				}
 				function reduceStringLiteralExpressions(node) {
 					for (var i in node.children) {

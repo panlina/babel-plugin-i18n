@@ -142,6 +142,26 @@ describe('jsx element', function () {
 			React.createElement("span", { title: "OK" })
 		);
 	});
+	it('member element', function () {
+		var result = babel.transformFileSync("./JSXElement.memberElement.js", {
+			presets: [require('@babel/preset-react')],
+			plugins: [require('..')],
+			parserOpts: { plugins: ['jsx'] }
+		});
+		var Radio = { Button: function () { } };
+		var context = {
+			i18n: dictionary,
+			localStorage: { language: 'en-US' },
+			React: React,
+			Radio: Radio
+		};
+		vm.createContext(context);
+		vm.runInContext(t, context);
+		assert.deepEqual(
+			vm.runInContext(result.code, context),
+			React.createElement(Radio.Button, { value: "text" }, ["Text"])
+		);
+	});
 	it('space', function () {
 		var result = babel.transformFileSync("./JSXElement.space.js", {
 			presets: [require('@babel/preset-react')],
