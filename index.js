@@ -14,12 +14,14 @@ module.exports = function ({ types: t }) {
 			StringLiteral(path) {
 				if (path.node.$$i18n) return;
 				if (!containsChinese(path.node.value)) return;
-				path.replaceWith(
+				var node =
 					t.callExpression(
 						t.identifier('t'),
 						[languageExpression, skip(t.stringLiteral(sourceFileName)), t.stringLiteral('StringLiteral'), skip(path.node)]
-					)
-				);
+					);
+				if (path.parent.type == 'JSXAttribute')
+					node = { type: 'JSXExpressionContainer', expression: node };
+				path.replaceWith(node);
 			},
 			TemplateLiteral(path) {
 				if (!path.node.quasis.some(quasi => containsChinese(quasi.value.cooked))) return;
