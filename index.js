@@ -16,7 +16,7 @@ module.exports = function ({ types: t }) {
 				if (!containsChinese(path.node.value)) return;
 				var node =
 					t.callExpression(
-						t.identifier('t'),
+						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
 						[languageExpression, skip(t.stringLiteral(sourceFileName)), t.stringLiteral('StringLiteral'), skip(path.node)]
 					);
 				if (path.parent.type == 'JSXAttribute')
@@ -27,7 +27,7 @@ module.exports = function ({ types: t }) {
 				if (!path.node.quasis.some(quasi => containsChinese(quasi.value.cooked))) return;
 				path.replaceWith(
 					t.callExpression(
-						t.identifier('t'),
+						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
 						[languageExpression, skip(t.stringLiteral(sourceFileName)), t.stringLiteral('TemplateLiteral'),
 							skip(t.stringLiteral(path.node.quasis.map(quasi => quasi.value.cooked).join("{}"))),
 							t.arrayExpression(path.node.expressions)
@@ -44,7 +44,7 @@ module.exports = function ({ types: t }) {
 				reduceStringLiteralExpressions(path.node);
 				path.replaceWith(
 					t.callExpression(
-						t.identifier('t'),
+						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
 						[languageExpression, skip(t.stringLiteral(sourceFileName)),
 							t.stringLiteral(path.node.type),
 							skip(t.stringLiteral(path.node.children.map(child =>

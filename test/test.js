@@ -6,14 +6,15 @@ var babel = require("@babel/core");
 var buildDictionary = require('../buildDictionary');
 process.chdir('./test/repo');
 var dictionary = buildDictionary();
-var t = fs.readFileSync(path.join(__dirname, '../t.js'), 'utf-8');
+var runtime = fs.readFileSync(path.join(__dirname, '../runtime.js'), 'utf-8');
 it('string literal', function () {
 	var result = babel.transformFileSync("./StringLiteral.js", {
 		plugins: [require('..')]
 	});
-	var context = { i18n: dictionary, localStorage: { language: 'en-US' } };
+	var context = { localStorage: { language: 'en-US' } };
 	vm.createContext(context);
-	vm.runInContext(t, context);
+	vm.runInContext(runtime, context);
+	context.i18n.dictionary = dictionary;
 	assert.equal(vm.runInContext(result.code, context), "OK");
 });
 describe('template literal', function () {
@@ -22,9 +23,10 @@ describe('template literal', function () {
 			plugins: [require('..')]
 		});
 		var n = 3;
-		var context = { i18n: dictionary, localStorage: { language: 'en-US' }, n: n };
+		var context = { localStorage: { language: 'en-US' }, n: n };
 		vm.createContext(context);
-		vm.runInContext(t, context);
+		vm.runInContext(runtime, context);
+		context.i18n.dictionary = dictionary;
 		assert.equal(vm.runInContext(result.code, context), `${n} message(s)`);
 	});
 	it('{}的{}属性', function () {
@@ -33,13 +35,13 @@ describe('template literal', function () {
 		});
 		var object = 'customer', property = 'name';
 		var context = {
-			i18n: dictionary,
 			localStorage: { language: 'en-US' },
 			object: object,
 			property: property
 		};
 		vm.createContext(context);
-		vm.runInContext(t, context);
+		vm.runInContext(runtime, context);
+		context.i18n.dictionary = dictionary;
 		assert.equal(vm.runInContext(result.code, context), `${property} property of ${object}`);
 	});
 });
@@ -62,13 +64,13 @@ describe('jsx element', function () {
 			parserOpts: { plugins: ['jsx'] }
 		});
 		var context = {
-			i18n: dictionary,
 			localStorage: { language: 'en-US' },
 			React: React,
 			Icon: Icon
 		};
 		vm.createContext(context);
-		vm.runInContext(t, context);
+		vm.runInContext(runtime, context);
+		context.i18n.dictionary = dictionary;
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
 			React.createElement("div", {}, [
@@ -85,13 +87,13 @@ describe('jsx element', function () {
 			parserOpts: { plugins: ['jsx'] }
 		});
 		var context = {
-			i18n: dictionary,
 			localStorage: { language: 'en-US' },
 			React: React,
 			Icon: Icon
 		};
 		vm.createContext(context);
-		vm.runInContext(t, context);
+		vm.runInContext(runtime, context);
+		context.i18n.dictionary = dictionary;
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
 			React.createElement(React.Fragment, {}, [
@@ -109,14 +111,14 @@ describe('jsx element', function () {
 		});
 		var object = 'customer', property = 'name';
 		var context = {
-			i18n: dictionary,
 			localStorage: { language: 'en-US' },
 			React: React,
 			object: object,
 			property: property
 		};
 		vm.createContext(context);
-		vm.runInContext(t, context);
+		vm.runInContext(runtime, context);
+		context.i18n.dictionary = dictionary;
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
 			React.createElement("span", {}, [
@@ -131,12 +133,12 @@ describe('jsx element', function () {
 			parserOpts: { plugins: ['jsx'] }
 		});
 		var context = {
-			i18n: dictionary,
 			localStorage: { language: 'en-US' },
 			React: React
 		};
 		vm.createContext(context);
-		vm.runInContext(t, context);
+		vm.runInContext(runtime, context);
+		context.i18n.dictionary = dictionary;
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
 			React.createElement("span", { title: "OK" })
@@ -150,13 +152,13 @@ describe('jsx element', function () {
 		});
 		var Radio = { Button: function () { } };
 		var context = {
-			i18n: dictionary,
 			localStorage: { language: 'en-US' },
 			React: React,
 			Radio: Radio
 		};
 		vm.createContext(context);
-		vm.runInContext(t, context);
+		vm.runInContext(runtime, context);
+		context.i18n.dictionary = dictionary;
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
 			React.createElement(Radio.Button, { value: "text" }, ["Text"])
@@ -169,12 +171,12 @@ describe('jsx element', function () {
 			parserOpts: { plugins: ['jsx'] }
 		});
 		var context = {
-			i18n: dictionary,
 			localStorage: { language: 'en-US' },
 			React: React
 		};
 		vm.createContext(context);
-		vm.runInContext(t, context);
+		vm.runInContext(runtime, context);
+		context.i18n.dictionary = dictionary;
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
 			React.createElement("div", {}, [
@@ -190,12 +192,12 @@ describe('jsx element', function () {
 			plugins: [require('..')]
 		});
 		var context = {
-			i18n: dictionary,
 			localStorage: { language: 'en-US' },
 			React: React
 		};
 		vm.createContext(context);
-		vm.runInContext(t, context);
+		vm.runInContext(runtime, context);
+		context.i18n.dictionary = dictionary;
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
 			React.createElement("p", {}, [
@@ -210,9 +212,10 @@ it('ignore', function () {
 	var result = babel.transformFileSync("./ignore.js", {
 		plugins: [require('..')]
 	});
-	var context = { i18n: dictionary, localStorage: { language: 'en-US' } };
+	var context = { localStorage: { language: 'en-US' } };
 	vm.createContext(context);
-	vm.runInContext(t, context);
+	vm.runInContext(runtime, context);
+	context.i18n.dictionary = dictionary;
 	assert.equal(vm.runInContext(result.code, context), "确定");
 });
 describe('untranslated', function () {
@@ -220,9 +223,10 @@ describe('untranslated', function () {
 		var result = babel.transformFileSync("./untranslated.StringLiteral.js", {
 			plugins: [require('..')]
 		});
-		var context = { i18n: dictionary, localStorage: { language: 'en-US' } };
+		var context = { localStorage: { language: 'en-US' } };
 		vm.createContext(context);
-		vm.runInContext(t, context);
+		vm.runInContext(runtime, context);
+		context.i18n.dictionary = dictionary;
 		assert.equal(vm.runInContext(result.code, context), "伐");
 	});
 	it('template literal', function () {
@@ -230,9 +234,10 @@ describe('untranslated', function () {
 			plugins: [require('..')]
 		});
 		var a = "好";
-		var context = { i18n: dictionary, localStorage: { language: 'en-US' }, a: a };
+		var context = { localStorage: { language: 'en-US' }, a: a };
 		vm.createContext(context);
-		vm.runInContext(t, context);
+		vm.runInContext(runtime, context);
+		context.i18n.dictionary = dictionary;
 		assert.equal(vm.runInContext(result.code, context), `${a}伐`);
 	});
 	it('jsx element', function () {
@@ -243,13 +248,13 @@ describe('untranslated', function () {
 		});
 		var a = "好";
 		var context = {
-			i18n: dictionary,
 			localStorage: { language: 'en-US' },
 			React: React,
 			a: a
 		};
 		vm.createContext(context);
-		vm.runInContext(t, context);
+		vm.runInContext(runtime, context);
+		context.i18n.dictionary = dictionary;
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
 			React.createElement("div", {}, [
@@ -262,8 +267,9 @@ it('zh-TW', function () {
 	var result = babel.transformFileSync("./StringLiteral.js", {
 		plugins: [require('..')]
 	});
-	var context = { i18n: dictionary, localStorage: { language: 'zh-TW' } };
+	var context = { localStorage: { language: 'zh-TW' } };
 	vm.createContext(context);
-	vm.runInContext(t, context);
+	vm.runInContext(runtime, context);
+	context.i18n.dictionary = dictionary;
 	assert.equal(vm.runInContext(result.code, context), "確定");
 });
