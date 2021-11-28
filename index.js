@@ -1,16 +1,30 @@
 var fs = require('fs');
 var path = require('path');
+var minimatch = require('minimatch');
 var removeJSXWhitespaces = require("./removeJSXWhitespaces");
 module.exports = function ({ types: t }) {
 	var config = fs.existsSync("./i18n.config.js") ? require(path.join(process.cwd(), './i18n.config.js')) : {};
 	var languageExpression = config.languageExpression(t);
 	var sourceFileName;
+	var skipProgram;
 	var visitor;
 	return {
 		pre(state) {
 			sourceFileName = path.relative(state.opts.root, state.opts.filename);
+			skipProgram = false;
+			if (
+				!minimatch(sourceFileName, config.include || "**/*.{js,jsx,ts,tsx}")
+				||
+				minimatch(sourceFileName, config.exclude || "{}")
+			) {
+				skipProgram = true;
+				return;
+			}
 		},
 		visitor: visitor = {
+			Program(path) {
+				if (skipProgram) path.stop();
+			},
 			StringLiteral(path) {
 				if (path.node.$$i18n) return;
 				if (!containsChinese(path.node.value)) return;

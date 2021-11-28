@@ -273,3 +273,15 @@ it('zh-TW', function () {
 	context.i18n.dictionary = dictionary;
 	assert.equal(vm.runInContext(result.code, context), "確定");
 });
+it('include', function () {
+	var result = babel.transformFileSync("./StringLiteral.mjs", {
+		plugins: [require('..')]
+	});
+	assert.equal(result.code, '"确定";');
+});
+it('exclude', function () {
+	var result = babel.transformFileSync("./exclude.js", {
+		plugins: [require('..')]
+	});
+	assert.equal(result.code, '"确定";');
+});
