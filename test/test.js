@@ -5,6 +5,11 @@ var vm = require('vm');
 var babel = require("@babel/core");
 var buildDictionary = require('../buildDictionary');
 process.chdir('./test/repo');
+var zhTWTranslator = require('./zhTWTranslator');
+var language = {
+	'en-US': 'dictionary',
+	'zh-TW': zhTWTranslator
+};
 var dictionary = buildDictionary();
 var runtime = fs.readFileSync(path.join(__dirname, '../runtime.js'), 'utf-8');
 it('string literal', function () {
@@ -14,6 +19,7 @@ it('string literal', function () {
 	var context = { localStorage: { language: 'en-US' } };
 	vm.createContext(context);
 	vm.runInContext(runtime, context);
+	context.i18n.language = language;
 	context.i18n.dictionary = dictionary;
 	assert.equal(vm.runInContext(result.code, context), "OK");
 });
@@ -26,6 +32,7 @@ describe('template literal', function () {
 		var context = { localStorage: { language: 'en-US' }, n: n };
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
+		context.i18n.language = language;
 		context.i18n.dictionary = dictionary;
 		assert.equal(vm.runInContext(result.code, context), `${n} message(s)`);
 	});
@@ -41,6 +48,7 @@ describe('template literal', function () {
 		};
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
+		context.i18n.language = language;
 		context.i18n.dictionary = dictionary;
 		assert.equal(vm.runInContext(result.code, context), `${property} property of ${object}`);
 	});
@@ -70,6 +78,7 @@ describe('jsx element', function () {
 		};
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
+		context.i18n.language = language;
 		context.i18n.dictionary = dictionary;
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
@@ -93,6 +102,7 @@ describe('jsx element', function () {
 		};
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
+		context.i18n.language = language;
 		context.i18n.dictionary = dictionary;
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
@@ -118,6 +128,7 @@ describe('jsx element', function () {
 		};
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
+		context.i18n.language = language;
 		context.i18n.dictionary = dictionary;
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
@@ -138,6 +149,7 @@ describe('jsx element', function () {
 		};
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
+		context.i18n.language = language;
 		context.i18n.dictionary = dictionary;
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
@@ -158,6 +170,7 @@ describe('jsx element', function () {
 		};
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
+		context.i18n.language = language;
 		context.i18n.dictionary = dictionary;
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
@@ -176,6 +189,7 @@ describe('jsx element', function () {
 		};
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
+		context.i18n.language = language;
 		context.i18n.dictionary = dictionary;
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
@@ -197,6 +211,7 @@ describe('jsx element', function () {
 		};
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
+		context.i18n.language = language;
 		context.i18n.dictionary = dictionary;
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
@@ -215,6 +230,7 @@ it('ignore', function () {
 	var context = { localStorage: { language: 'en-US' } };
 	vm.createContext(context);
 	vm.runInContext(runtime, context);
+	context.i18n.language = language;
 	context.i18n.dictionary = dictionary;
 	assert.equal(vm.runInContext(result.code, context), "确定");
 });
@@ -226,6 +242,7 @@ describe('untranslated', function () {
 		var context = { localStorage: { language: 'en-US' } };
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
+		context.i18n.language = language;
 		context.i18n.dictionary = dictionary;
 		assert.equal(vm.runInContext(result.code, context), "伐");
 	});
@@ -237,6 +254,7 @@ describe('untranslated', function () {
 		var context = { localStorage: { language: 'en-US' }, a: a };
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
+		context.i18n.language = language;
 		context.i18n.dictionary = dictionary;
 		assert.equal(vm.runInContext(result.code, context), `${a}伐`);
 	});
@@ -254,6 +272,7 @@ describe('untranslated', function () {
 		};
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
+		context.i18n.language = language;
 		context.i18n.dictionary = dictionary;
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
@@ -270,8 +289,9 @@ it('zh-TW', function () {
 	var context = { localStorage: { language: 'zh-TW' } };
 	vm.createContext(context);
 	vm.runInContext(runtime, context);
+	context.i18n.language = language;
 	context.i18n.dictionary = dictionary;
-	assert.equal(vm.runInContext(result.code, context), "確定");
+	assert.equal(vm.runInContext(result.code, context), require('chinese-conv').tify("确定"));
 });
 it('include', function () {
 	var result = babel.transformFileSync("./StringLiteral.mjs", {
