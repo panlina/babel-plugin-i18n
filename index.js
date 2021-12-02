@@ -4,7 +4,6 @@ var minimatch = require('minimatch');
 var removeJSXWhitespaces = require("./removeJSXWhitespaces");
 module.exports = function ({ types: t }) {
 	var config = fs.existsSync("./i18n.config.js") ? require(path.join(process.cwd(), './i18n.config.js')) : {};
-	var languageExpression = config.languageExpression(t);
 	var sourceFileName;
 	var skipProgram;
 	var visitor;
@@ -31,7 +30,7 @@ module.exports = function ({ types: t }) {
 				var node =
 					t.callExpression(
 						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
-						[languageExpression, skip(t.stringLiteral(sourceFileName)), t.stringLiteral('StringLiteral'), skip(path.node)]
+						[t.memberExpression(t.identifier('i18n'), t.identifier('language')), skip(t.stringLiteral(sourceFileName)), t.stringLiteral('StringLiteral'), skip(path.node)]
 					);
 				if (path.parent.type == 'JSXAttribute')
 					node = { type: 'JSXExpressionContainer', expression: node };
@@ -42,7 +41,7 @@ module.exports = function ({ types: t }) {
 				path.replaceWith(
 					t.callExpression(
 						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
-						[languageExpression, skip(t.stringLiteral(sourceFileName)), t.stringLiteral('TemplateLiteral'),
+						[t.memberExpression(t.identifier('i18n'), t.identifier('language')), skip(t.stringLiteral(sourceFileName)), t.stringLiteral('TemplateLiteral'),
 							skip(t.stringLiteral(path.node.quasis.map(quasi => quasi.value.cooked).join("{}"))),
 							t.arrayExpression(path.node.expressions)
 						]
@@ -59,7 +58,7 @@ module.exports = function ({ types: t }) {
 				path.replaceWith(
 					t.callExpression(
 						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
-						[languageExpression, skip(t.stringLiteral(sourceFileName)),
+						[t.memberExpression(t.identifier('i18n'), t.identifier('language')), skip(t.stringLiteral(sourceFileName)),
 							t.stringLiteral(path.node.type),
 							skip(t.stringLiteral(path.node.children.map(child =>
 								child.type == 'JSXText' ?

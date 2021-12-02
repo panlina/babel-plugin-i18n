@@ -20,13 +20,13 @@ i18n = {
 				return React.createElement(React.Fragment, {}, component.map((c, i) => i & 1 ? expression[c ? +c : 0] : c));
 		}
 		function translate(language, path, text) {
-			if (typeof i18n.language[language] == 'object')
+			if (typeof i18n.translator[language] == 'object')
 				return lookup(language, path, text);
-			else if (typeof i18n.language[language] == 'function')
-				return i18n.language[language](text);
+			else if (typeof i18n.translator[language] == 'function')
+				return i18n.translator[language](text);
 		}
 		function lookup(language, path, text) {
-			var dictionary = i18n.language[language];
+			var dictionary = i18n.translator[language];
 			var result = dictionary[`${path}.i18n.${language}.json`]?.[text];
 			if (result != undefined) return result;
 			var component = path.split('/');
