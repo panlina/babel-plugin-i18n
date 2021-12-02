@@ -5,5 +5,9 @@ module.exports = {
 			t.identifier('localStorage'),
 			t.identifier('language')
 		);
+	},
+	language: {
+		'en-US': 'dictionary',
+		'zh-TW': 'translator'
 	}
 };
