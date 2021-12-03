@@ -7,10 +7,12 @@ i18n = {
 			case 'TemplateLiteral':
 				var translation = translate(language, path, text) ?? text;
 				var component = translation.split(/\{([0-9]?)\}/);
+				if (component.some((e, i) => i & 1 && (e ? +e : 0) >= expression.length)) throw new i18n.IndexOutOfBound();
 				return component.map((c, i) => i & 1 ? `${expression[c ? +c : 0]}` : c).join('');
 			case 'JSXElement':
 				var translation = translate(language, path, text) ?? text;
 				var component = translation.split(/\{([0-9]?)\}/);
+				if (component.some((e, i) => i & 1 && (e ? +e : 0) >= expression.length)) throw new i18n.IndexOutOfBound();
 				return React.createElement(Component, props, component.map((c, i) => i & 1 ? expression[c ? +c : 0] : c));
 			case 'JSXFragment':
 				var translation = translate(language, path, text) ?? text;
@@ -34,5 +36,8 @@ i18n = {
 				if (result != undefined) return result;
 			}
 		}
+	},
+	IndexOutOfBound: class extends Error {
+		constructor() { super("i18n: translation error: index out of bound."); }
 	}
 };

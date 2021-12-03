@@ -278,6 +278,41 @@ it('zh-TW', function () {
 	context.i18n.language = language;
 	assert.equal(vm.runInContext(result.code, context), require('chinese-conv').tify("确定"));
 });
+describe('error', function () {
+	describe('index out of bound', function () {
+		it('template literal', function () {
+			var result = babel.transformFileSync("./error.indexOutOfBound.TemplateLiteral.js", {
+				plugins: [require('..')]
+			});
+			var n = 3;
+			var context = { localStorage: { language: 'en-US' }, n: n };
+			vm.createContext(context);
+			vm.runInContext(runtime, context);
+			context.i18n.language = language;
+			assert.throws(() => {
+				vm.runInContext(result.code, context);
+			}, context.i18n.IndexOutOfBound);
+		});
+		it('jsx element', function () {
+			var result = babel.transformFileSync("./error.indexOutOfBound.JSXElement.js", {
+				presets: [require('@babel/preset-react')],
+				plugins: [require('..')],
+				parserOpts: { plugins: ['jsx'] }
+			});
+			var context = {
+				localStorage: { language: 'en-US' },
+				React: React,
+				Icon: Icon
+			};
+			vm.createContext(context);
+			vm.runInContext(runtime, context);
+			context.i18n.language = language;
+			assert.throws(() => {
+				vm.runInContext(result.code, context);
+			}, context.i18n.IndexOutOfBound);
+		});
+	});
+});
 it('include', function () {
 	var result = babel.transformFileSync("./StringLiteral.mjs", {
 		plugins: [require('..')]
