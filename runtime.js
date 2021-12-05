@@ -8,12 +8,22 @@ i18n = {
 				var translation = translate(language, path, text) ?? text;
 				var component = translation.split(/\{([0-9]?)\}/);
 				if (component.some((e, i) => i & 1 && (e ? +e : 0) >= expression.length)) throw new i18n.IndexOutOfBound();
-				return component.map((c, i) => i & 1 ? `${expression[c ? +c : 0]}` : c).join('');
+				for (var i in component)
+					if (i & 1) {
+						var c = component[i];
+						component[i] = expression[c ? +c : 0];
+					}
+				return component.map((c, i) => i & 1 ? `${c}` : c).join('');
 			case 'JSXElement':
 				var translation = translate(language, path, text) ?? text;
 				var component = translation.split(/\{([0-9]?)\}/);
 				if (component.some((e, i) => i & 1 && (e ? +e : 0) >= expression.length)) throw new i18n.IndexOutOfBound();
-				return React.createElement(Component, props, component.map((c, i) => i & 1 ? expression[c ? +c : 0] : c));
+				for (var i in component)
+					if (i & 1) {
+						var c = component[i];
+						component[i] = expression[c ? +c : 0];
+					}
+				return React.createElement(Component, props, component);
 			case 'JSXFragment':
 				var translation = translate(language, path, text) ?? text;
 				var component = translation.split(/\{([0-9]?)\}/);
