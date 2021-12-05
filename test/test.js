@@ -11,6 +11,7 @@ var translator = {
 	'en-US': dictionary,
 	'zh-TW': zhTWTranslator
 };
+var pluralize = require('pluralize');
 var runtime = fs.readFileSync(path.join(__dirname, '../runtime.js'), 'utf-8');
 it('string literal', function () {
 	var result = babel.transformFileSync("./StringLiteral.js", {
@@ -20,6 +21,7 @@ it('string literal', function () {
 	vm.createContext(context);
 	vm.runInContext(runtime, context);
 	context.i18n.translator = translator;
+	context.i18n.pluralize = pluralize;
 	context.i18n.language = 'en-US';
 	assert.equal(vm.runInContext(result.code, context), "OK");
 });
@@ -28,13 +30,14 @@ describe('template literal', function () {
 		var result = babel.transformFileSync("./TemplateLiteral.js", {
 			plugins: [require('..')]
 		});
-		var n = 3;
-		var context = { n: n };
+		var name = "Jack";
+		var context = { name: name };
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
 		context.i18n.translator = translator;
+		context.i18n.pluralize = pluralize;
 		context.i18n.language = 'en-US';
-		assert.equal(vm.runInContext(result.code, context), `${n} message(s)`);
+		assert.equal(vm.runInContext(result.code, context), `Hello, ${name}!`);
 	});
 	it('{}的{}属性', function () {
 		var result = babel.transformFileSync("./TemplateLiteral.{}的{}属性.js", {
@@ -48,8 +51,25 @@ describe('template literal', function () {
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
 		context.i18n.translator = translator;
+		context.i18n.pluralize = pluralize;
 		context.i18n.language = 'en-US';
 		assert.equal(vm.runInContext(result.code, context), `${property} property of ${object}`);
+	});
+	it('pluralize', function () {
+		var result = babel.transformFileSync("./TemplateLiteral.pluralize.js", {
+			plugins: [require('..')]
+		});
+		var n = 3;
+		var context = { n: n };
+		vm.createContext(context);
+		vm.runInContext(runtime, context);
+		context.i18n.translator = translator;
+		context.i18n.pluralize = pluralize;
+		context.i18n.language = 'en-US';
+		assert.equal(vm.runInContext(result.code, context), `${n} messages`);
+		n = 1;
+		context.n = n;
+		assert.equal(vm.runInContext(result.code, context), `${n} message`);
 	});
 });
 var React = {
@@ -77,6 +97,7 @@ describe('jsx element', function () {
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
 		context.i18n.translator = translator;
+		context.i18n.pluralize = pluralize;
 		context.i18n.language = 'en-US';
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
@@ -100,6 +121,7 @@ describe('jsx element', function () {
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
 		context.i18n.translator = translator;
+		context.i18n.pluralize = pluralize;
 		context.i18n.language = 'en-US';
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
@@ -125,11 +147,48 @@ describe('jsx element', function () {
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
 		context.i18n.translator = translator;
+		context.i18n.pluralize = pluralize;
 		context.i18n.language = 'en-US';
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
 			React.createElement("span", {}, [
 				"", property, " property of ", object, ""
+			])
+		);
+	});
+	it('pluralize', function () {
+		var result = babel.transformFileSync("./JSXElement.pluralize.js", {
+			presets: [require('@babel/preset-react')],
+			plugins: [require('..')],
+			parserOpts: { plugins: ['jsx'] }
+		});
+		var n = 3;
+		var context = {
+			React: React,
+			Icon: Icon,
+			n: n
+		};
+		vm.createContext(context);
+		vm.runInContext(runtime, context);
+		context.i18n.translator = translator;
+		context.i18n.pluralize = pluralize;
+		context.i18n.language = 'en-US';
+		assert.deepEqual(
+			vm.runInContext(result.code, context),
+			React.createElement("span", {}, [
+				"",
+				n,
+				" messages"
+			])
+		);
+		n = 1;
+		context.n = n;
+		assert.deepEqual(
+			vm.runInContext(result.code, context),
+			React.createElement("span", {}, [
+				"",
+				n,
+				" message"
 			])
 		);
 	});
@@ -145,6 +204,7 @@ describe('jsx element', function () {
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
 		context.i18n.translator = translator;
+		context.i18n.pluralize = pluralize;
 		context.i18n.language = 'en-US';
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
@@ -165,6 +225,7 @@ describe('jsx element', function () {
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
 		context.i18n.translator = translator;
+		context.i18n.pluralize = pluralize;
 		context.i18n.language = 'en-US';
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
@@ -183,6 +244,7 @@ describe('jsx element', function () {
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
 		context.i18n.translator = translator;
+		context.i18n.pluralize = pluralize;
 		context.i18n.language = 'en-US';
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
@@ -204,6 +266,7 @@ describe('jsx element', function () {
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
 		context.i18n.translator = translator;
+		context.i18n.pluralize = pluralize;
 		context.i18n.language = 'en-US';
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
@@ -223,6 +286,7 @@ it('ignore', function () {
 	vm.createContext(context);
 	vm.runInContext(runtime, context);
 	context.i18n.translator = translator;
+	context.i18n.pluralize = pluralize;
 	context.i18n.language = 'en-US';
 	assert.equal(vm.runInContext(result.code, context), "确定");
 });
@@ -235,6 +299,7 @@ describe('untranslated', function () {
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
 		context.i18n.translator = translator;
+		context.i18n.pluralize = pluralize;
 		context.i18n.language = 'en-US';
 		assert.equal(vm.runInContext(result.code, context), "伐");
 	});
@@ -247,6 +312,7 @@ describe('untranslated', function () {
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
 		context.i18n.translator = translator;
+		context.i18n.pluralize = pluralize;
 		context.i18n.language = 'en-US';
 		assert.equal(vm.runInContext(result.code, context), `${a}伐`);
 	});
@@ -264,6 +330,7 @@ describe('untranslated', function () {
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
 		context.i18n.translator = translator;
+		context.i18n.pluralize = pluralize;
 		context.i18n.language = 'en-US';
 		assert.deepEqual(
 			vm.runInContext(result.code, context),
@@ -281,6 +348,7 @@ it('zh-TW', function () {
 	vm.createContext(context);
 	vm.runInContext(runtime, context);
 	context.i18n.translator = translator;
+	context.i18n.pluralize = pluralize;
 	context.i18n.language = 'zh-TW';
 	assert.equal(vm.runInContext(result.code, context), require('chinese-conv').tify("确定"));
 });
@@ -295,6 +363,7 @@ describe('error', function () {
 			vm.createContext(context);
 			vm.runInContext(runtime, context);
 			context.i18n.translator = translator;
+			context.i18n.pluralize = pluralize;
 			context.i18n.language = 'en-US';
 			assert.throws(() => {
 				vm.runInContext(result.code, context);
@@ -313,6 +382,7 @@ describe('error', function () {
 			vm.createContext(context);
 			vm.runInContext(runtime, context);
 			context.i18n.translator = translator;
+			context.i18n.pluralize = pluralize;
 			context.i18n.language = 'en-US';
 			assert.throws(() => {
 				vm.runInContext(result.code, context);
