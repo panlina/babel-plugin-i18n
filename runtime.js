@@ -48,7 +48,6 @@ i18n = {
 				if (result != undefined) return result;
 			}
 		}
-		// TODO: throw missing quantity error
 		function pluralize(component) {
 			for (var i in component) {
 				if (i & 1) continue;
@@ -64,6 +63,7 @@ i18n = {
 						var aa = "";
 						var ab = a;
 					}
+					if (!+i) throw new i18n.MissingQuantity();
 					var quantity = expression[(i >> 1) - 1];
 					component[i] = `${aa}${quantity > 1 && i18n.pluralize ? i18n.pluralize(ab) : ab}${b}`;
 				}
@@ -72,5 +72,8 @@ i18n = {
 	},
 	IndexOutOfBound: class extends Error {
 		constructor() { super("i18n: translation error: index out of bound."); }
+	},
+	MissingQuantity: class extends Error {
+		constructor() { super("i18n: translation error: missing quantity."); }
 	}
 };

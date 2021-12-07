@@ -389,6 +389,21 @@ describe('error', function () {
 			}, context.i18n.IndexOutOfBound);
 		});
 	});
+	it('missing quantity', function () {
+		var result = babel.transformFileSync("./error.missingQuantity.js", {
+			plugins: [require('..')]
+		});
+		var n = 3;
+		var context = { n: n };
+		vm.createContext(context);
+		vm.runInContext(runtime, context);
+		context.i18n.translator = translator;
+		context.i18n.pluralize = pluralize;
+		context.i18n.language = 'en-US';
+		assert.throws(() => {
+			vm.runInContext(result.code, context);
+		}, context.i18n.MissingQuantity);
+	});
 });
 it('include', function () {
 	var result = babel.transformFileSync("./StringLiteral.mjs", {
