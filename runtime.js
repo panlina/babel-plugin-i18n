@@ -39,7 +39,7 @@ i18n = {
 				return i18n.translator[language](text);
 		}
 		function lookup(language, path, text) {
-			var dictionary = i18n.translator[language];
+			var dictionary = i18n.translator[language].dictionary;
 			var result = dictionary[`${path}.i18n.${language}.json`]?.[text];
 			if (result != undefined) return result;
 			var component = path.split('/');
@@ -66,7 +66,7 @@ i18n = {
 					}
 					if (!+i) throw new i18n.MissingQuantity();
 					var quantity = expression[(i >> 1) - 1];
-					component[i] = `${aa}${quantity > 1 && i18n.pluralize ? i18n.pluralize(ab) : ab}${b}`;
+					component[i] = `${aa}${quantity > 1 && i18n.translator[language].pluralize ? i18n.translator[language].pluralize(ab) : ab}${b}`;
 				}
 			}
 		}
