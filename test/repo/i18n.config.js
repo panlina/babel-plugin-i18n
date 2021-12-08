@@ -1,6 +1,6 @@
 module.exports = {
 	exclude: "exclude.js",
-	language: {
+	translator: {
 		'en-US': 'dictionary',
 		'zh-TW': 'translator'
 	}
