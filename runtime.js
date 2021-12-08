@@ -1,5 +1,6 @@
 i18n = {
-	language: {},
+	language: undefined,
+	translator: {},
 	t(language, path, type, text, expression, Component, props) {
 		switch (type) {
 			case 'StringLiteral':
