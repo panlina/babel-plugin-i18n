@@ -15,6 +15,7 @@ i18n = {
 						component[i] = expression[c ? +c : 0];
 					}
 				pluralize(component);
+				ordinalize(component);
 				return component.map((c, i) => i & 1 ? `${c}` : c).join('');
 			case 'JSXElement':
 				var translation = translate(language, path, text) ?? text;
@@ -26,6 +27,7 @@ i18n = {
 						component[i] = expression[c ? +c : 0];
 					}
 				pluralize(component);
+				ordinalize(component);
 				return React.createElement(Component, props, component);
 			case 'JSXFragment':
 				var translation = translate(language, path, text) ?? text;
@@ -70,11 +72,27 @@ i18n = {
 				}
 			}
 		}
+		function ordinalize(component) {
+			for (var i in component) {
+				if (i & 1) continue;
+				var c = component[i];
+				if (c.includes('(th)')) {
+					// take the expression right before "(th)", replace it with its ordinal form, and remove "(th)"
+					if (!c.startsWith('(th)')) throw new i18n.MissingOrdinal();
+					if (!+i) throw new i18n.MissingOrdinal();
+					component[i - 1] = i18n.translator[language].ordinalize ? i18n.translator[language].ordinalize(component[i - 1]) : component[i - 1];
+					component[i] = component[i].substr("(th)".length);
+				}
+			}
+		}
 	},
 	IndexOutOfBound: class extends Error {
 		constructor() { super("i18n: translation error: index out of bound."); }
 	},
 	MissingQuantity: class extends Error {
 		constructor() { super("i18n: translation error: missing quantity."); }
+	},
+	MissingOrdinal: class extends Error {
+		constructor() { super("i18n: translation error: missing ordinal."); }
 	}
 };

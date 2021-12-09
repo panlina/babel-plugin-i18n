@@ -7,11 +7,13 @@ var buildDictionary = require('../buildDictionary');
 process.chdir('./test/repo');
 var dictionary = buildDictionary('en-US');
 var pluralize = require('pluralize');
+var ordinal = require('ordinal');
 var zhTWTranslator = require('./zhTWTranslator');
 var translator = {
 	'en-US': {
 		dictionary: dictionary,
-		pluralize: pluralize
+		pluralize: pluralize,
+		ordinalize: ordinal
 	},
 	'zh-TW': zhTWTranslator
 };
@@ -69,6 +71,18 @@ describe('template literal', function () {
 		n = 1;
 		context.n = n;
 		assert.equal(vm.runInContext(result.code, context), `${n} message`);
+	});
+	it('ordinalize', function () {
+		var result = babel.transformFileSync("./TemplateLiteral.ordinalize.js", {
+			plugins: [require('..')]
+		});
+		var n = 3;
+		var context = { n: n };
+		vm.createContext(context);
+		vm.runInContext(runtime, context);
+		context.i18n.translator = translator;
+		context.i18n.language = 'en-US';
+		assert.equal(vm.runInContext(result.code, context), `The 3rd message`);
 	});
 });
 var React = {
@@ -386,6 +400,20 @@ describe('error', function () {
 		assert.throws(() => {
 			vm.runInContext(result.code, context);
 		}, context.i18n.MissingQuantity);
+	});
+	it('missing ordinal', function () {
+		var result = babel.transformFileSync("./error.missingOrdinal.js", {
+			plugins: [require('..')]
+		});
+		var n = 3;
+		var context = { n: n };
+		vm.createContext(context);
+		vm.runInContext(runtime, context);
+		context.i18n.translator = translator;
+		context.i18n.language = 'en-US';
+		assert.throws(() => {
+			vm.runInContext(result.code, context);
+		}, context.i18n.MissingOrdinal);
 	});
 });
 it('include', function () {
