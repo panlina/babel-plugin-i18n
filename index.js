@@ -30,7 +30,7 @@ module.exports = function ({ types: t }) {
 				var node =
 					t.callExpression(
 						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
-						[t.memberExpression(t.identifier('i18n'), t.identifier('language')), skip(t.stringLiteral(sourceFileName)), t.stringLiteral('StringLiteral'), skip(path.node)]
+						[t.memberExpression(t.identifier('i18n'), t.identifier('language')), skip(t.stringLiteral(sourceFileName)), t.stringLiteral('StringLiteral'), skip(path.node['$$i18n.key'] ? t.stringLiteral(path.node['$$i18n.key']) : path.node)]
 					);
 				if (path.parent.type == 'JSXAttribute')
 					node = { type: 'JSXExpressionContainer', expression: node };
@@ -42,7 +42,10 @@ module.exports = function ({ types: t }) {
 					t.callExpression(
 						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
 						[t.memberExpression(t.identifier('i18n'), t.identifier('language')), skip(t.stringLiteral(sourceFileName)), t.stringLiteral('TemplateLiteral'),
-							skip(t.stringLiteral(path.node.quasis.map(quasi => quasi.value.cooked).join("{}"))),
+							skip(
+								path.node['$$i18n.key'] ? t.stringLiteral(path.node['$$i18n.key']) :
+									t.stringLiteral(path.node.quasis.map(quasi => quasi.value.cooked).join("{}"))
+							),
 							t.arrayExpression(path.node.expressions)
 						]
 					)
@@ -60,11 +63,14 @@ module.exports = function ({ types: t }) {
 						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
 						[t.memberExpression(t.identifier('i18n'), t.identifier('language')), skip(t.stringLiteral(sourceFileName)),
 							t.stringLiteral(path.node.type),
-							skip(t.stringLiteral(path.node.children.map(child =>
-								child.type == 'JSXText' ?
-									removeJSXWhitespaces(child.value) :
-									"{}"
-							).join(''))),
+							skip(
+								path.node['$$i18n.key'] ? t.stringLiteral(path.node['$$i18n.key']) :
+									t.stringLiteral(path.node.children.map(child =>
+										child.type == 'JSXText' ?
+											removeJSXWhitespaces(child.value) :
+											"{}"
+									).join(''))
+							),
 							t.arrayExpression(
 								path.node.children
 									.filter(child => child.type != 'JSXText')
@@ -125,11 +131,25 @@ module.exports = function ({ types: t }) {
 					expressions[0].value == 'i18n.ignore'
 				)
 					path.skip();
+				if (
+					expressions.length == 2
+					&&
+					expressions[0].type == 'StringLiteral'
+					&&
+					expressions[0].value.startsWith('i18n:')
+				)
+					path.replaceWith(
+						key(expressions[1], expressions[0].value.substr('i18n:'.length))
+					);
 			}
 		}
 	};
 	function skip(node) {
 		node.$$i18n = true;
+		return node;
+	}
+	function key(node, key) {
+		node["$$i18n.key"] = key;
 		return node;
 	}
 };
