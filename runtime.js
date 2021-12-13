@@ -32,7 +32,15 @@ i18n = {
 			case 'JSXFragment':
 				var translation = translate(language, path, text) ?? text;
 				var component = translation.split(/\{([0-9]?)\}/);
-				return React.createElement(React.Fragment, {}, component.map((c, i) => i & 1 ? expression[c ? +c : 0] : c));
+				if (component.some((e, i) => i & 1 && (e ? +e : 0) >= expression.length)) throw new i18n.IndexOutOfBound();
+				for (var i in component)
+					if (i & 1) {
+						var c = component[i];
+						component[i] = expression[c ? +c : 0];
+					}
+				pluralize(component);
+				ordinalize(component);
+				return React.createElement(React.Fragment, {}, component);
 		}
 		function translate(language, path, text) {
 			if (typeof i18n.translator[language] == 'object')

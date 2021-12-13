@@ -201,6 +201,41 @@ describe('jsx element', function () {
 			])
 		);
 	});
+	it('jsx fragment pluralize', function () {
+		var result = babel.transformFileSync("./JSXFragment.pluralize.js", {
+			presets: [require('@babel/preset-react')],
+			plugins: [require('..')],
+			parserOpts: { plugins: ['jsx'] }
+		});
+		var n = 3;
+		var context = {
+			React: React,
+			Icon: Icon,
+			n: n
+		};
+		vm.createContext(context);
+		vm.runInContext(runtime, context);
+		context.i18n.translator = translator;
+		context.i18n.language = 'en-US';
+		assert.deepEqual(
+			vm.runInContext(result.code, context),
+			React.createElement(React.Fragment, {}, [
+				"",
+				n,
+				" messages"
+			])
+		);
+		n = 1;
+		context.n = n;
+		assert.deepEqual(
+			vm.runInContext(result.code, context),
+			React.createElement(React.Fragment, {}, [
+				"",
+				n,
+				" message"
+			])
+		);
+	});
 	it('string prop', function () {
 		var result = babel.transformFileSync("./JSXElement.stringProp.js", {
 			presets: [require('@babel/preset-react')],
@@ -381,6 +416,24 @@ describe('error', function () {
 		});
 		it('jsx element', function () {
 			var result = babel.transformFileSync("./error.indexOutOfBound.JSXElement.js", {
+				presets: [require('@babel/preset-react')],
+				plugins: [require('..')],
+				parserOpts: { plugins: ['jsx'] }
+			});
+			var context = {
+				React: React,
+				Icon: Icon
+			};
+			vm.createContext(context);
+			vm.runInContext(runtime, context);
+			context.i18n.translator = translator;
+			context.i18n.language = 'en-US';
+			assert.throws(() => {
+				vm.runInContext(result.code, context);
+			}, context.i18n.IndexOutOfBound);
+		});
+		it('jsx fragment', function () {
+			var result = babel.transformFileSync("./error.indexOutOfBound.JSXFragment.js", {
 				presets: [require('@babel/preset-react')],
 				plugins: [require('..')],
 				parserOpts: { plugins: ['jsx'] }
