@@ -7,39 +7,15 @@ i18n = {
 				return translate(language, path, text) ?? text;
 			case 'TemplateLiteral':
 				var translation = translate(language, path, text) ?? text;
-				var component = translation.split(/\{([0-9]?)\}/);
-				if (component.some((e, i) => i & 1 && (e ? +e : 0) >= expression.length)) throw new i18n.IndexOutOfBound();
-				for (var i in component)
-					if (i & 1) {
-						var c = component[i];
-						component[i] = expression[c ? +c : 0];
-					}
-				pluralize(component);
-				ordinalize(component);
+				var component = evaluate(translation);
 				return component.map((c, i) => i & 1 ? `${c}` : c).join('');
 			case 'JSXElement':
 				var translation = translate(language, path, text) ?? text;
-				var component = translation.split(/\{([0-9]?)\}/);
-				if (component.some((e, i) => i & 1 && (e ? +e : 0) >= expression.length)) throw new i18n.IndexOutOfBound();
-				for (var i in component)
-					if (i & 1) {
-						var c = component[i];
-						component[i] = expression[c ? +c : 0];
-					}
-				pluralize(component);
-				ordinalize(component);
+				var component = evaluate(translation);
 				return React.createElement(Component, props, component);
 			case 'JSXFragment':
 				var translation = translate(language, path, text) ?? text;
-				var component = translation.split(/\{([0-9]?)\}/);
-				if (component.some((e, i) => i & 1 && (e ? +e : 0) >= expression.length)) throw new i18n.IndexOutOfBound();
-				for (var i in component)
-					if (i & 1) {
-						var c = component[i];
-						component[i] = expression[c ? +c : 0];
-					}
-				pluralize(component);
-				ordinalize(component);
+				var component = evaluate(translation);
 				return React.createElement(React.Fragment, {}, component);
 		}
 		function translate(language, path, text) {
@@ -58,6 +34,19 @@ i18n = {
 				var result = dictionary[[...dir.slice(0, i), `i18n.${language}.json`].join('/')]?.[text];
 				if (result != undefined) return result;
 			}
+		}
+		function evaluate(translation) {
+			var component = translation.split(/\{([0-9]?)\}/);
+			if (component.some((e, i) => i & 1 && (e ? +e : 0) >= expression.length))
+				throw new i18n.IndexOutOfBound();
+			for (var i in component)
+				if (i & 1) {
+					var c = component[i];
+					component[i] = expression[c ? +c : 0];
+				}
+			pluralize(component);
+			ordinalize(component);
+			return component;
 		}
 		function pluralize(component) {
 			for (var i in component) {
