@@ -4,7 +4,10 @@ i18n = {
 	t(language, path, type, text, expression, Component, props) {
 		switch (type) {
 			case 'StringLiteral':
-				return translate(language, path, text) ?? text;
+				var translation = translate(language, path, text) ?? text;
+				var component = parse(translation);
+				var component = evaluate(component);
+				return component[0];
 			case 'TemplateLiteral':
 				var translation = translate(language, path, text) ?? text;
 				var component = parse(translation);
