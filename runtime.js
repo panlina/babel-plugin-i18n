@@ -7,15 +7,18 @@ i18n = {
 				return translate(language, path, text) ?? text;
 			case 'TemplateLiteral':
 				var translation = translate(language, path, text) ?? text;
-				var component = evaluate(translation);
+				var component = parse(translation);
+				var component = evaluate(component);
 				return component.map((c, i) => i & 1 ? `${c}` : c).join('');
 			case 'JSXElement':
 				var translation = translate(language, path, text) ?? text;
-				var component = evaluate(translation);
+				var component = parse(translation);
+				var component = evaluate(component);
 				return React.createElement(Component, props, component);
 			case 'JSXFragment':
 				var translation = translate(language, path, text) ?? text;
-				var component = evaluate(translation);
+				var component = parse(translation);
+				var component = evaluate(component);
 				return React.createElement(React.Fragment, {}, component);
 		}
 		function translate(language, path, text) {
@@ -35,15 +38,19 @@ i18n = {
 				if (result != undefined) return result;
 			}
 		}
-		function evaluate(translation) {
+		function parse(translation) {
 			var component = translation.split(/\{([0-9]?)\}/);
-			if (component.some((e, i) => i & 1 && (e ? +e : 0) >= expression.length))
+			for (var i in component)
+				if (i & 1)
+					component[i] = component[i] ? +component[i] : 0;
+			return component;
+		}
+		function evaluate(component) {
+			if (component.some((e, i) => i & 1 && e >= expression.length))
 				throw new i18n.IndexOutOfBound();
 			for (var i in component)
-				if (i & 1) {
-					var c = component[i];
-					component[i] = expression[c ? +c : 0];
-				}
+				if (i & 1)
+					component[i] = expression[component[i]];
 			pluralize(component);
 			ordinalize(component);
 			return component;
