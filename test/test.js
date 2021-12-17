@@ -318,6 +318,75 @@ describe('jsx element', function () {
 		);
 	});
 });
+describe('escape', function () {
+	it('string literal', function () {
+		var result = babel.transformFileSync("./escape.StringLiteral.js", {
+			plugins: [require('..')]
+		});
+		var context = {};
+		vm.createContext(context);
+		vm.runInContext(runtime, context);
+		context.i18n.translator = translator;
+		context.i18n.language = 'en-US';
+		assert.equal(vm.runInContext(result.code, context), "Cannot contain following characters: \\()[]{}");
+	});
+	it('template literal', function () {
+		var result = babel.transformFileSync("./escape.TemplateLiteral.js", {
+			plugins: [require('..')]
+		});
+		var name = 'f';
+		var context = { name: name };
+		vm.createContext(context);
+		vm.runInContext(runtime, context);
+		context.i18n.translator = translator;
+		context.i18n.language = 'en-US';
+		assert.equal(vm.runInContext(result.code, context), `function ${name}() { }\t// empty function`);
+	});
+	it('jsx element', function () {
+		var result = babel.transformFileSync("./escape.JSXElement.js", {
+			presets: [require('@babel/preset-react')],
+			plugins: [require('..')],
+			parserOpts: { plugins: ['jsx'] }
+		});
+		var name = 'f';
+		var context = {
+			React: React,
+			name: name
+		};
+		vm.createContext(context);
+		vm.runInContext(runtime, context);
+		context.i18n.translator = translator;
+		context.i18n.language = 'en-US';
+		assert.deepEqual(
+			vm.runInContext(result.code, context),
+			React.createElement("div", {}, [
+				"function ", name, "() { }\t// empty function"
+			])
+		);
+	});
+	it('jsx fragment', function () {
+		var result = babel.transformFileSync("./escape.JSXFragment.js", {
+			presets: [require('@babel/preset-react')],
+			plugins: [require('..')],
+			parserOpts: { plugins: ['jsx'] }
+		});
+		var name = 'f';
+		var context = {
+			React: React,
+			name: name
+		};
+		vm.createContext(context);
+		vm.runInContext(runtime, context);
+		context.i18n.translator = translator;
+		context.i18n.language = 'en-US';
+		assert.deepEqual(
+			vm.runInContext(result.code, context),
+			React.createElement(React.Fragment, {}, [
+				"function ", name, "() { }\t// empty function"
+			])
+		);
+	});
+});
 it('ignore', function () {
 	var result = babel.transformFileSync("./ignore.js", {
 		plugins: [require('..')]

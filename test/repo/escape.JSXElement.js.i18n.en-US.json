@@ -1,0 +1,3 @@
+{
+	"function {}() \\{ \\}\t// 空函数": "function {}() \\{ \\}\t// empty function"
+}

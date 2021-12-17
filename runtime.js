@@ -42,11 +42,16 @@ i18n = {
 			}
 		}
 		function parse(translation) {
-			var component = translation.split(/\{([0-9]?)\}/);
+			var component = translation.split(/(?<!\\)\{([0-9]?)(?<!\\)\}/);
 			for (var i in component)
 				if (i & 1)
 					component[i] = component[i] ? +component[i] : 0;
+				else
+					component[i] = unescape(component[i]);
 			return component;
+			function unescape(text) {
+				return text.replace(/\\([\\{}])/g, "$1");
+			}
 		}
 		function evaluate(component) {
 			if (component.some((e, i) => i & 1 && e >= expression.length))
