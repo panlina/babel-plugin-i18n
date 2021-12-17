@@ -42,15 +42,18 @@ i18n = {
 			}
 		}
 		function parse(translation) {
-			var component = translation.split(/(?<!\\)\{([0-9]?)(?<!\\)\}/);
+			var component = translation.split(/(?<!\\)\{((?:[^\\}]|\\\\|\\\})*)(?<!\\)\}/);
 			for (var i in component)
 				if (i & 1)
-					component[i] = component[i] ? +component[i] : 0;
+					component[i] = parseReference(component[i]);
 				else
 					component[i] = unescape(component[i]);
 			return component;
 			function unescape(text) {
 				return text.replace(/\\([\\{}])/g, "$1");
+			}
+			function parseReference(text) {
+				return text ? +text : 0;
 			}
 		}
 		function evaluate(component) {
