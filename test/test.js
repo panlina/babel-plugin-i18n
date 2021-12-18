@@ -84,6 +84,18 @@ describe('template literal', function () {
 		context.i18n.language = 'en-US';
 		assert.equal(vm.runInContext(result.code, context), `The 3rd message`);
 	});
+	it('map', function () {
+		var result = babel.transformFileSync("./TemplateLiteral.map.js", {
+			plugins: [require('..')]
+		});
+		var n = 3;
+		var context = { n: n };
+		vm.createContext(context);
+		vm.runInContext(runtime, context);
+		context.i18n.translator = translator;
+		context.i18n.language = 'en-US';
+		assert.equal(vm.runInContext(result.code, context), "Apr");
+	});
 });
 var React = {
 	createElement(type, props, children) {

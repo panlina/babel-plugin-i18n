@@ -53,15 +53,28 @@ i18n = {
 				return text.replace(/\\([\\{}])/g, "$1");
 			}
 			function parseReference(text) {
-				return text ? +text : 0;
+				var match = text.match(/([0-9]+)?(?:\|map ([^}]+))?/);
+				var index = match[1] != undefined ? +match[1] : 0;
+				var map = match[2] != undefined ? parseMap(match[2]) : undefined;
+				return { index: index, map: map };
+			}
+			function parseMap(text) {
+				return Object.fromEntries(text.split(',').map(parseEntry));
+			}
+			function parseEntry(text) {
+				return text.split('->');
 			}
 		}
 		function evaluate(component) {
-			if (component.some((e, i) => i & 1 && e >= expression.length))
+			if (component.some((e, i) => i & 1 && e.index >= expression.length))
 				throw new i18n.IndexOutOfBound();
 			for (var i in component)
-				if (i & 1)
-					component[i] = expression[component[i]];
+				if (i & 1) {
+					var value = expression[component[i].index];
+					if (component[i].map)
+						value = component[i].map[value];
+					component[i] = value;
+				}
 			pluralize(component);
 			ordinalize(component);
 			return component;
