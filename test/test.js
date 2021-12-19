@@ -410,8 +410,30 @@ it('ignore', function () {
 	context.i18n.language = 'en-US';
 	assert.equal(vm.runInContext(result.code, context), "确定");
 });
+it('explicit', function () {
+	var result = babel.transformFileSync("./explicit.js", {
+		plugins: [require('..')]
+	});
+	var context = {};
+	vm.createContext(context);
+	vm.runInContext(runtime, context);
+	context.i18n.translator = translator;
+	context.i18n.language = 'en-US';
+	assert.equal(vm.runInContext(result.code, context), "OK");
+});
 it('key', function () {
 	var result = babel.transformFileSync("./key.js", {
+		plugins: [require('..')]
+	});
+	var context = {};
+	vm.createContext(context);
+	vm.runInContext(runtime, context);
+	context.i18n.translator = translator;
+	context.i18n.language = 'en-US';
+	assert.equal(vm.runInContext(result.code, context), "Are you sure you want to delete this message?");
+});
+it('explicit.key', function () {
+	var result = babel.transformFileSync("./explicit.key.js", {
 		plugins: [require('..')]
 	});
 	var context = {};

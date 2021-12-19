@@ -6,11 +6,13 @@ module.exports = function ({ types: t }) {
 	var config = fs.existsSync("./i18n.config.js") ? require(path.join(process.cwd(), './i18n.config.js')) : {};
 	var sourceFileName;
 	var skipProgram;
+	var explicit;
 	var visitor;
 	return {
 		pre(state) {
 			sourceFileName = path.relative(state.opts.root, state.opts.filename);
 			skipProgram = false;
+			explicit = config.explicit || false;
 			if (
 				!minimatch(sourceFileName, config.include || "**/*.{js,jsx,ts,tsx}")
 				||
@@ -24,9 +26,17 @@ module.exports = function ({ types: t }) {
 			Program(path) {
 				if (skipProgram) path.stop();
 			},
+			DirectiveLiteral(path) {
+				if (path.node.value == "i18n.explicit")
+					explicit = true;
+			},
 			StringLiteral(path) {
-				if (path.node.$$i18n) return;
-				if (!containsChinese(path.node.value)) return;
+				if (explicit) {
+					if (!path.node["$$i18n.take"]) return;
+				} else {
+					if (path.node["$$i18n.skip"]) return;
+					if (!containsChinese(path.node.value)) return;
+				}
 				var node =
 					t.callExpression(
 						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
@@ -37,7 +47,11 @@ module.exports = function ({ types: t }) {
 				path.replaceWith(node);
 			},
 			TemplateLiteral(path) {
-				if (!path.node.quasis.some(quasi => containsChinese(quasi.value.cooked))) return;
+				if (explicit) {
+					if (!path.node["$$i18n.take"]) return;
+				} else {
+					if (!path.node.quasis.some(quasi => containsChinese(quasi.value.cooked))) return;
+				}
 				path.replaceWith(
 					t.callExpression(
 						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
@@ -52,11 +66,15 @@ module.exports = function ({ types: t }) {
 				);
 			},
 			JSXElement(path) {
-				if (!path.node.children.some(child =>
-					child.type == 'JSXText'
-					&&
-					containsChinese(child.value)
-				)) return;
+				if (explicit) {
+					if (!path.node["$$i18n.take"]) return;
+				} else {
+					if (!path.node.children.some(child =>
+						child.type == 'JSXText'
+						&&
+						containsChinese(child.value)
+					)) return;
+				}
 				reduceStringLiteralExpressions(path.node);
 				path.replaceWith(
 					t.callExpression(
@@ -122,30 +140,45 @@ module.exports = function ({ types: t }) {
 				visitor.JSXElement.apply(this, arguments);
 			},
 			SequenceExpression(path) {
-				var expressions = path.node.expressions;
-				if (
-					expressions.length == 2
-					&&
-					expressions[0].type == 'StringLiteral'
-					&&
-					expressions[0].value == 'i18n.ignore'
-				)
-					path.skip();
-				if (
-					expressions.length == 2
-					&&
-					expressions[0].type == 'StringLiteral'
-					&&
-					expressions[0].value.startsWith('i18n:')
-				)
-					path.replaceWith(
-						key(expressions[1], expressions[0].value.substr('i18n:'.length))
-					);
+				if (!explicit) {
+					var expressions = path.node.expressions;
+					if (
+						expressions.length == 2
+						&&
+						expressions[0].type == 'StringLiteral'
+						&&
+						expressions[0].value == 'i18n.ignore'
+					)
+						path.skip();
+					if (
+						expressions.length == 2
+						&&
+						expressions[0].type == 'StringLiteral'
+						&&
+						expressions[0].value.startsWith('i18n:')
+					)
+						path.replaceWith(
+							key(expressions[1], expressions[0].value.substr('i18n:'.length))
+						);
+				}
+			},
+			CallExpression(path) {
+				if (explicit)
+					if (path.node.callee.name == 'i18n')
+						path.replaceWith(take(
+							path.node.arguments.length <= 1 ?
+								path.node.arguments[0] :
+								key(path.node.arguments[1], path.node.arguments[0].value)
+						));
 			}
 		}
 	};
 	function skip(node) {
-		node.$$i18n = true;
+		node["$$i18n.skip"] = true;
+		return node;
+	}
+	function take(node) {
+		node["$$i18n.take"] = true;
 		return node;
 	}
 	function key(node, key) {

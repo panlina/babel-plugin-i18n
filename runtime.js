@@ -124,3 +124,4 @@ i18n = {
 		constructor() { super("i18n: translation error: missing ordinal."); }
 	}
 };
+i18n = Object.assign(x => x, i18n);
