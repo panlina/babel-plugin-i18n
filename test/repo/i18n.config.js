@@ -3,5 +3,6 @@ module.exports = {
 	translator: {
 		'en-US': 'dictionary',
 		'zh-TW': 'translator'
-	}
+	},
+	test: require("../containsChinese")
 };

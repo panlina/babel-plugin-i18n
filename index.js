@@ -35,7 +35,7 @@ module.exports = function ({ types: t }) {
 					if (!path.node["$$i18n.take"]) return;
 				} else {
 					if (path.node["$$i18n.skip"]) return;
-					if (!containsChinese(path.node.value)) return;
+					if (!config.test(path.node.value)) return;
 				}
 				var node =
 					t.callExpression(
@@ -50,7 +50,7 @@ module.exports = function ({ types: t }) {
 				if (explicit) {
 					if (!path.node["$$i18n.take"]) return;
 				} else {
-					if (!path.node.quasis.some(quasi => containsChinese(quasi.value.cooked))) return;
+					if (!path.node.quasis.some(quasi => config.test(quasi.value.cooked))) return;
 				}
 				path.replaceWith(
 					t.callExpression(
@@ -72,7 +72,7 @@ module.exports = function ({ types: t }) {
 					if (!path.node.children.some(child =>
 						child.type == 'JSXText'
 						&&
-						containsChinese(child.value)
+						config.test(child.value)
 					)) return;
 				}
 				reduceStringLiteralExpressions(path.node);
@@ -189,6 +189,3 @@ module.exports = function ({ types: t }) {
 		return text.replace(/([\\{}])/g, "\\$1");
 	}
 };
-function containsChinese(text) {
-	return /[\u4e00-\u9fa5]/.test(text);
-}
