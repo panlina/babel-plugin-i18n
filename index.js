@@ -40,7 +40,16 @@ module.exports = function ({ types: t }) {
 				var node =
 					t.callExpression(
 						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
-						[t.memberExpression(t.identifier('i18n'), t.identifier('language')), skip(t.stringLiteral(sourceFileName)), t.stringLiteral('StringLiteral'), skip(path.node['$$i18n.key'] ? t.stringLiteral(path.node['$$i18n.key']) : t.stringLiteral(escape(path.node.value)))]
+						[
+							t.memberExpression(t.identifier('i18n'), t.identifier('language')),
+							skip(t.stringLiteral(sourceFileName)),
+							t.stringLiteral('StringLiteral'),
+							skip(
+								path.node['$$i18n.key'] ?
+									t.stringLiteral(path.node['$$i18n.key']) :
+									t.stringLiteral(escape(path.node.value))
+							)
+						]
 					);
 				if (path.parent.type == 'JSXAttribute')
 					node = { type: 'JSXExpressionContainer', expression: node };
@@ -55,10 +64,18 @@ module.exports = function ({ types: t }) {
 				path.replaceWith(
 					t.callExpression(
 						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
-						[t.memberExpression(t.identifier('i18n'), t.identifier('language')), skip(t.stringLiteral(sourceFileName)), t.stringLiteral('TemplateLiteral'),
+						[
+							t.memberExpression(t.identifier('i18n'), t.identifier('language')),
+							skip(t.stringLiteral(sourceFileName)),
+							t.stringLiteral('TemplateLiteral'),
 							skip(
-								path.node['$$i18n.key'] ? t.stringLiteral(path.node['$$i18n.key']) :
-									t.stringLiteral(path.node.quasis.map(quasi => escape(quasi.value.cooked)).join("{}"))
+								path.node['$$i18n.key'] ?
+									t.stringLiteral(path.node['$$i18n.key']) :
+									t.stringLiteral(
+										path.node.quasis.map(
+											quasi => escape(quasi.value.cooked)
+										).join("{}")
+									)
 							),
 							t.arrayExpression(path.node.expressions)
 						]
@@ -79,15 +96,20 @@ module.exports = function ({ types: t }) {
 				path.replaceWith(
 					t.callExpression(
 						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
-						[t.memberExpression(t.identifier('i18n'), t.identifier('language')), skip(t.stringLiteral(sourceFileName)),
+						[
+							t.memberExpression(t.identifier('i18n'), t.identifier('language')),
+							skip(t.stringLiteral(sourceFileName)),
 							t.stringLiteral(path.node.type),
 							skip(
-								path.node['$$i18n.key'] ? t.stringLiteral(path.node['$$i18n.key']) :
-									t.stringLiteral(path.node.children.map(child =>
-										child.type == 'JSXText' ?
-											escape(removeJSXWhitespaces(child.value)) :
-											"{}"
-									).join(''))
+								path.node['$$i18n.key'] ?
+									t.stringLiteral(path.node['$$i18n.key']) :
+									t.stringLiteral(
+										path.node.children.map(child =>
+											child.type == 'JSXText' ?
+												escape(removeJSXWhitespaces(child.value)) :
+												"{}"
+										).join('')
+									)
 							),
 							t.arrayExpression(
 								path.node.children
