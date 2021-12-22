@@ -42,9 +42,9 @@ module.exports = function ({ types: t }) {
 						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
 						[
 							t.memberExpression(t.identifier('i18n'), t.identifier('language')),
-							skip(t.stringLiteral(sourceFileName)),
-							skip(t.stringLiteral('StringLiteral')),
-							skip(
+							nontext(t.stringLiteral(sourceFileName)),
+							nontext(t.stringLiteral('StringLiteral')),
+							nontext(
 								path.node['$$i18n.key'] ?
 									t.stringLiteral(path.node['$$i18n.key']) :
 									t.stringLiteral(escape(path.node.value))
@@ -66,9 +66,9 @@ module.exports = function ({ types: t }) {
 						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
 						[
 							t.memberExpression(t.identifier('i18n'), t.identifier('language')),
-							skip(t.stringLiteral(sourceFileName)),
-							skip(t.stringLiteral('TemplateLiteral')),
-							skip(
+							nontext(t.stringLiteral(sourceFileName)),
+							nontext(t.stringLiteral('TemplateLiteral')),
+							nontext(
 								path.node['$$i18n.key'] ?
 									t.stringLiteral(path.node['$$i18n.key']) :
 									t.stringLiteral(
@@ -98,9 +98,9 @@ module.exports = function ({ types: t }) {
 						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
 						[
 							t.memberExpression(t.identifier('i18n'), t.identifier('language')),
-							skip(t.stringLiteral(sourceFileName)),
-							skip(t.stringLiteral(path.node.type)),
-							skip(
+							nontext(t.stringLiteral(sourceFileName)),
+							nontext(t.stringLiteral(path.node.type)),
+							nontext(
 								path.node['$$i18n.key'] ?
 									t.stringLiteral(path.node['$$i18n.key']) :
 									t.stringLiteral(
@@ -195,6 +195,9 @@ module.exports = function ({ types: t }) {
 			}
 		}
 	};
+	function nontext(node) {
+		return explicit ? node : skip(node);
+	}
 	function skip(node) {
 		node["$$i18n.skip"] = true;
 		return node;
