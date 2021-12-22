@@ -43,7 +43,7 @@ module.exports = function ({ types: t }) {
 						[
 							t.memberExpression(t.identifier('i18n'), t.identifier('language')),
 							skip(t.stringLiteral(sourceFileName)),
-							t.stringLiteral('StringLiteral'),
+							skip(t.stringLiteral('StringLiteral')),
 							skip(
 								path.node['$$i18n.key'] ?
 									t.stringLiteral(path.node['$$i18n.key']) :
@@ -67,7 +67,7 @@ module.exports = function ({ types: t }) {
 						[
 							t.memberExpression(t.identifier('i18n'), t.identifier('language')),
 							skip(t.stringLiteral(sourceFileName)),
-							t.stringLiteral('TemplateLiteral'),
+							skip(t.stringLiteral('TemplateLiteral')),
 							skip(
 								path.node['$$i18n.key'] ?
 									t.stringLiteral(path.node['$$i18n.key']) :
@@ -99,7 +99,7 @@ module.exports = function ({ types: t }) {
 						[
 							t.memberExpression(t.identifier('i18n'), t.identifier('language')),
 							skip(t.stringLiteral(sourceFileName)),
-							t.stringLiteral(path.node.type),
+							skip(t.stringLiteral(path.node.type)),
 							skip(
 								path.node['$$i18n.key'] ?
 									t.stringLiteral(path.node['$$i18n.key']) :
