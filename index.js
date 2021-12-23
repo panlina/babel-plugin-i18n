@@ -29,6 +29,8 @@ module.exports = function ({ types: t }) {
 			DirectiveLiteral(path) {
 				if (path.node.value == "i18n.explicit")
 					explicit = true;
+				else if (path.node.value == "i18n.implicit")
+					explicit = false;
 			},
 			StringLiteral(path) {
 				if (explicit) {
