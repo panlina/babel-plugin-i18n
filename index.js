@@ -1,7 +1,8 @@
 var fs = require('fs');
 var path = require('path');
 var minimatch = require('minimatch');
-var removeJSXWhitespaces = require("./removeJSXWhitespaces");
+var abstract = require('./abstract');
+var reduceStringLiteralExpressions = require('./reduceStringLiteralExpressions');
 module.exports = function ({ types: t }) {
 	var config = fs.existsSync("./i18n.config.js") ? require(path.join(process.cwd(), './i18n.config.js')) : {};
 	var sourceFileName;
@@ -49,7 +50,7 @@ module.exports = function ({ types: t }) {
 							nontext(
 								path.node['$$i18n.key'] ?
 									t.stringLiteral(path.node['$$i18n.key']) :
-									t.stringLiteral(escape(path.node.value))
+									t.stringLiteral(abstract(path.node))
 							)
 						]
 					);
@@ -73,11 +74,7 @@ module.exports = function ({ types: t }) {
 							nontext(
 								path.node['$$i18n.key'] ?
 									t.stringLiteral(path.node['$$i18n.key']) :
-									t.stringLiteral(
-										path.node.quasis.map(
-											quasi => escape(quasi.value.cooked)
-										).join("{}")
-									)
+									t.stringLiteral(abstract(path.node))
 							),
 							t.arrayExpression(path.node.expressions)
 						]
@@ -104,13 +101,7 @@ module.exports = function ({ types: t }) {
 							nontext(
 								path.node['$$i18n.key'] ?
 									t.stringLiteral(path.node['$$i18n.key']) :
-									t.stringLiteral(
-										reduceStringLiteralExpressions(path.node.children).map(child =>
-											child.type == 'JSXText' ?
-												escape(removeJSXWhitespaces(child.value)) :
-												"{}"
-										).join('')
-									)
+									t.stringLiteral(abstract(path.node))
 							),
 							t.arrayExpression(
 								reduceStringLiteralExpressions(path.node.children)
@@ -145,15 +136,6 @@ module.exports = function ({ types: t }) {
 							return t.identifier(node.name);
 					else if (node.type == 'JSXMemberExpression')
 						return t.identifier(`${getComponentFromNode(node.object).name}.${getComponentFromNode(node.property).name}`);
-				}
-				function reduceStringLiteralExpressions(children) {
-					return children.map(child =>
-						child.type == 'JSXExpressionContainer' &&
-							child.expression.type == 'StringLiteral' &&
-							child.expression.value == ' ' ?
-							t.jsxText(child.expression.value) :
-							child
-					);
 				}
 			},
 			JSXFragment(path) {
@@ -207,8 +189,5 @@ module.exports = function ({ types: t }) {
 	function key(node, key) {
 		node["$$i18n.key"] = key;
 		return node;
-	}
-	function escape(text) {
-		return text.replace(/([\\{}])/g, "\\$1");
 	}
 };
