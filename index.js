@@ -94,7 +94,6 @@ module.exports = function ({ types: t }) {
 						config.test(child.value)
 					)) return;
 				}
-				reduceStringLiteralExpressions(path.node);
 				path.replaceWith(
 					t.callExpression(
 						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
@@ -106,7 +105,7 @@ module.exports = function ({ types: t }) {
 								path.node['$$i18n.key'] ?
 									t.stringLiteral(path.node['$$i18n.key']) :
 									t.stringLiteral(
-										path.node.children.map(child =>
+										reduceStringLiteralExpressions(path.node.children).map(child =>
 											child.type == 'JSXText' ?
 												escape(removeJSXWhitespaces(child.value)) :
 												"{}"
@@ -114,7 +113,7 @@ module.exports = function ({ types: t }) {
 									)
 							),
 							t.arrayExpression(
-								path.node.children
+								reduceStringLiteralExpressions(path.node.children)
 									.filter(child => child.type != 'JSXText')
 									.map(child => child.type == 'JSXExpressionContainer' ? child.expression : child)
 							),
@@ -147,17 +146,14 @@ module.exports = function ({ types: t }) {
 					else if (node.type == 'JSXMemberExpression')
 						return t.identifier(`${getComponentFromNode(node.object).name}.${getComponentFromNode(node.property).name}`);
 				}
-				function reduceStringLiteralExpressions(node) {
-					for (var i in node.children) {
-						var child = node.children[i];
-						if (
-							child.type == 'JSXExpressionContainer' &&
+				function reduceStringLiteralExpressions(children) {
+					return children.map(child =>
+						child.type == 'JSXExpressionContainer' &&
 							child.expression.type == 'StringLiteral' &&
-							child.expression.value == ' '
-						)
-							node.children[i] = t.jsxText(child.expression.value);
-					}
-					return node;
+							child.expression.value == ' ' ?
+							t.jsxText(child.expression.value) :
+							child
+					);
 				}
 			},
 			JSXFragment(path) {
