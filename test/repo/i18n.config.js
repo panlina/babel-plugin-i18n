@@ -2,7 +2,7 @@ module.exports = {
 	exclude: "exclude.js",
 	translator: {
 		'en-US': 'dictionary',
-		'zh-TW': 'translator'
+		'zh-TW': require('../zhTWTranslator')
 	},
 	test: require("../containsChinese")
 };
