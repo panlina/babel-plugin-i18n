@@ -1,5 +1,5 @@
 {
-  "name": "babel-plugin-i18n",
+  "name": "@jacklu/babel-plugin-i18n",
   "version": "0.0.0",
   "description": "A rule based i18n babel plugin",
   "repository": {
