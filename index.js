@@ -1,17 +1,20 @@
 var fs = require('fs');
 var path = require('path');
+var findUp = require('find-up');
 var minimatch = require('minimatch');
 var abstract = require('./abstract');
 var reduceStringLiteralExpressions = require('./reduceStringLiteralExpressions');
 module.exports = function ({ types: t }) {
 	var config = fs.existsSync("./i18n.config.js") ? require(path.join(process.cwd(), './i18n.config.js')) : {};
 	var sourceFileName;
+	var package;
 	var skipProgram;
 	var explicit;
 	var visitor;
 	return {
 		pre(state) {
 			sourceFileName = path.relative(state.opts.root, state.opts.filename);
+			package = require(findUp.sync('package.json', { cwd: state.opts.filename })).name;
 			skipProgram = false;
 			explicit = config.explicit || false;
 			if (
@@ -45,7 +48,7 @@ module.exports = function ({ types: t }) {
 						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
 						[
 							t.memberExpression(t.identifier('i18n'), t.identifier('language')),
-							nontext(t.stringLiteral(sourceFileName)),
+							nontext(t.stringLiteral(`${package}:${sourceFileName}`)),
 							nontext(t.stringLiteral('StringLiteral')),
 							nontext(
 								path.node['$$i18n.key'] ?
@@ -69,7 +72,7 @@ module.exports = function ({ types: t }) {
 						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
 						[
 							t.memberExpression(t.identifier('i18n'), t.identifier('language')),
-							nontext(t.stringLiteral(sourceFileName)),
+							nontext(t.stringLiteral(`${package}:${sourceFileName}`)),
 							nontext(t.stringLiteral('TemplateLiteral')),
 							nontext(
 								path.node['$$i18n.key'] ?
@@ -96,7 +99,7 @@ module.exports = function ({ types: t }) {
 						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
 						[
 							t.memberExpression(t.identifier('i18n'), t.identifier('language')),
-							nontext(t.stringLiteral(sourceFileName)),
+							nontext(t.stringLiteral(`${package}:${sourceFileName}`)),
 							nontext(t.stringLiteral(path.node.type)),
 							nontext(
 								path.node['$$i18n.key'] ?

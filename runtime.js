@@ -31,13 +31,14 @@ i18n = {
 				return i18n.translator[language](text);
 		}
 		function lookup(language, path, text) {
+			var [package, path] = path.split(':');
 			var dictionary = i18n.translator[language].dictionary;
-			var result = dictionary[`${path}.i18n.${language}.json`]?.[text];
+			var result = dictionary[`${package}:${path}.i18n.${language}.json`]?.[text];
 			if (result != undefined) return result;
 			var component = path.split('/');
 			var dir = component.slice(0, component.length - 1);
 			for (var i = dir.length; i >= 0; i--) {
-				var result = dictionary[[...dir.slice(0, i), `i18n.${language}.json`].join('/')]?.[text];
+				var result = dictionary[`${package}:${[...dir.slice(0, i), `i18n.${language}.json`].join('/')}`]?.[text];
 				if (result != undefined) return result;
 			}
 		}
