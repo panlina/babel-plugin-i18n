@@ -25,6 +25,24 @@ module.exports = function ({ types: t }) {
 		},
 		visitor: {
 			Program(path) {
+				// The empty statement is a workaround for the issue that,
+				// when working with webpack,
+				// the inserted require statements will be generated without trailing semicolons,
+				// so when the source code begins with an open parenthesis, it will be interpreted as a function call.
+				// 
+				// Like:
+				// 
+				// /* 0 */
+				// /***/ (function(module, exports, __webpack_require__) {
+				//
+				// __webpack_require__(1)
+				// 
+				// (function () {
+				// 	...
+				// })();
+				// 
+				// No github issue or stackoverflow answer found yet.
+				path.node.body.unshift(t.emptyStatement());
 				path.node.body.unshift(
 					...Object.values(translation).flatMap(dictionary =>
 						dictionary.map(dictionary =>
