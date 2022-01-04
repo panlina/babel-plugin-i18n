@@ -118,14 +118,16 @@ module.exports = function ({ types: t }) {
 								t.identifier('undefined') :
 								t.objectExpression(
 									path.node.openingElement.attributes.map(attribute =>
-										t.objectProperty(
-											t.stringLiteral(attribute.name.name),
-											attribute.value ?
-												attribute.value.type == 'JSXExpressionContainer' ?
-													attribute.value.expression :
-													attribute.value :
-												t.booleanLiteral(true)
-										)
+										t.isJSXSpreadAttribute(attribute) ?
+											t.spreadElement(attribute.argument) :
+											t.objectProperty(
+												t.stringLiteral(attribute.name.name),
+												attribute.value ?
+													attribute.value.type == 'JSXExpressionContainer' ?
+														attribute.value.expression :
+														attribute.value :
+													t.booleanLiteral(true)
+											)
 									)
 								)
 						]
