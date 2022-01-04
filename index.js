@@ -124,7 +124,7 @@ module.exports = function ({ types: t }) {
 												attribute.value.type == 'JSXExpressionContainer' ?
 													attribute.value.expression :
 													attribute.value :
-												t.identifier('undefined')
+												t.booleanLiteral(true)
 										)
 									)
 								)
