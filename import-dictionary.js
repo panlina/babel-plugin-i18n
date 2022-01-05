@@ -43,13 +43,14 @@ module.exports = function ({ types: t }) {
 				// 
 				// No github issue or stackoverflow answer found yet.
 				path.node.body.unshift(t.emptyStatement());
-				path.node.body.unshift(
-					...Object.values(translation).flatMap(dictionary =>
-						dictionary.map(dictionary =>
+				for (var language in translation) {
+					var dictionary = translation[language];
+					path.node.body.unshift(
+						...dictionary.map(dictionary =>
 							t.callExpression(t.identifier('require'), [t.stringLiteral(dictionary)])
 						)
-					)
-				);
+					);
+				}
 				if (skip) path.stop();
 			}
 		}
