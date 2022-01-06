@@ -108,7 +108,7 @@ module.exports = function ({ types: t }) {
 							),
 							t.arrayExpression(
 								reduceStringLiteralExpressions(path.node.children)
-									.filter(child => child.type != 'JSXText')
+									.filter(child => child.type != 'JSXText' && (child.type != 'JSXExpressionContainer' || child.expression.type != 'JSXEmptyExpression'))
 									.map(child => child.type == 'JSXExpressionContainer' ? child.expression : child)
 							),
 							path.node.type == 'JSXFragment' ?

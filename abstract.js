@@ -13,7 +13,9 @@ function abstract(node) {
 			return reduceStringLiteralExpressions(node.children).map(child =>
 				child.type == 'JSXText' ?
 					escape(removeJSXWhitespaces(child.value)) :
-					"{}"
+					child.type == 'JSXExpressionContainer' && child.expression.type == 'JSXEmptyExpression' ?
+						"" :
+						"{}"
 			).join('');
 	}
 	function escape(text) {

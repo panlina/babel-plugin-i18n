@@ -293,6 +293,29 @@ describe('', function () {
 				React.createElement(Radio.Button, { value: "text" }, ["Text"])
 			);
 		});
+		it('jsx empty expression', function () {
+			var result = babel.transformFileSync("./JSXElement.JSXEmptyExpression.js", {
+				presets: [require('@babel/preset-react')],
+				plugins: [require('..')],
+				parserOpts: { plugins: ['jsx'] }
+			});
+			var context = {
+				React: React,
+				Icon: Icon
+			};
+			vm.createContext(context);
+			vm.runInContext(runtime, context);
+			context.i18n.translator = translator;
+			context.i18n.language = 'en-US';
+			assert.deepEqual(
+				vm.runInContext(result.code, context),
+				React.createElement("div", {}, [
+					"",
+					React.createElement(Icon, { type: "plus" }),
+					"New"
+				])
+			);
+		});
 		it('space', function () {
 			var result = babel.transformFileSync("./JSXElement.space.js", {
 				presets: [require('@babel/preset-react')],
