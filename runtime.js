@@ -43,7 +43,7 @@ i18n = {
 			}
 		}
 		function parse(translation) {
-			var component = translation.split(/(?<!\\)\{((?:[^\\}]|\\\\|\\\})*)(?<!\\)\}/);
+			var component = splitTranslation(translation);
 			for (var i in component)
 				if (i & 1)
 					component[i] = parseReference(component[i]);
@@ -64,6 +64,33 @@ i18n = {
 			}
 			function parseEntry(text) {
 				return text.split('->');
+			}
+			/**
+			 * RegExp lookbehind may not be supported, so this function is extracted to handle this.
+			 * It uses lookbehind when it's supported, and switch to a less efficient workaround if not.
+			 */
+			function splitTranslation(translation) {
+				if (!i18n.splitTranslationRegExp)
+					try {
+						i18n.splitTranslationRegExp =
+							new RegExp("(?<!\\\\)\\{((?:[^\\\\}]|\\\\\\\\|\\\\\\})*)(?<!\\\\)\\}");
+					}
+					catch (e) {
+						i18n.splitTranslationRegExp = e;
+					}
+				if (i18n.splitTranslationRegExp instanceof RegExp)
+					return translation.split(i18n.splitTranslationRegExp);
+				else {
+					// The method is to reverse both the string and the RegExp, so that lookbehind becomes lookahead.
+					// Got this from https://blog.stevenlevithan.com/archives/mimic-lookbehind-javascript
+					return reverseString(translation)
+						.split(/\}(?!\\)((?:[^\\}]|\\\\|\}\\)*)\{(?!\\)/)
+						.map(reverseString)
+						.reverse();
+					function reverseString(s) {
+						return s.split('').reverse().join('');
+					}
+				}
 			}
 		}
 		function evaluate(component) {
