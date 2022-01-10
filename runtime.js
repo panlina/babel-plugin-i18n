@@ -6,21 +6,26 @@ i18n = {
 			case 'StringLiteral':
 				var translation = translate(language, path, text) ?? text;
 				var component = parse(translation);
+				// fill in references for untranslated text
+				if (translation == text) fillInReferences(component);
 				var component = evaluate(component);
 				return component[0];
 			case 'TemplateLiteral':
 				var translation = translate(language, path, text) ?? text;
 				var component = parse(translation);
+				if (translation == text) fillInReferences(component);
 				var component = evaluate(component);
 				return component.map((c, i) => i & 1 ? `${c}` : c).join('');
 			case 'JSXElement':
 				var translation = translate(language, path, text) ?? text;
 				var component = parse(translation);
+				if (translation == text) fillInReferences(component);
 				var component = evaluate(component);
 				return React.createElement(Component, props, component);
 			case 'JSXFragment':
 				var translation = translate(language, path, text) ?? text;
 				var component = parse(translation);
+				if (translation == text) fillInReferences(component);
 				var component = evaluate(component);
 				return React.createElement(React.Fragment, {}, component);
 		}
@@ -29,6 +34,16 @@ i18n = {
 				return lookup(language, path, text);
 			else if (typeof i18n.translator[language] == 'function')
 				return i18n.translator[language](text);
+		}
+		/**
+		 * Fill in all references with index for untranslated text, so that text is kept verbatim.
+		 * @example
+		 * "a{}b{}c" -> "a{0}b{1}c"
+		 */
+		function fillInReferences(component) {
+			for (var i in component)
+				if (i & 1)
+					component[i].index = i >> 1;
 		}
 		function lookup(language, path, text) {
 			var [package, path] = path.split(':');

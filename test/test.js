@@ -519,6 +519,18 @@ describe('', function () {
 				])
 			);
 		});
+		it('{}{}', function () {
+			var result = babel.transformFileSync("./untranslated.{}{}.js", {
+				plugins: [require('..')]
+			});
+			var a = "好", b = "是";
+			var context = { a: a, b: b };
+			vm.createContext(context);
+			vm.runInContext(runtime, context);
+			context.i18n.translator = translator;
+			context.i18n.language = 'en-US';
+			assert.equal(vm.runInContext(result.code, context), `${a}伐${b}伐`);
+		});
 	});
 	it('zh-TW', function () {
 		var result = babel.transformFileSync("./StringLiteral.js", {
