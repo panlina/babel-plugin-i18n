@@ -73,13 +73,6 @@ module.exports = function ({ types: t }) {
 					&&
 					config.test(child.value)
 				)) return;
-				if (
-					path.node.children.length == 1
-					&&
-					path.node.children[0].type == 'JSXText'
-				)
-					if (path.node.children[0].value.includes('\n'))
-						path.node.children[0].value = path.node.children[0].value.trim();
 				var source = abstract(path.node);
 				path.node.children.forEach(child => {
 					if (child.type == 'JSXText')
