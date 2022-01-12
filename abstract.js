@@ -21,5 +21,5 @@ function abstract(node) {
 	function escape(text) {
 		return text.replace(/([\\{}])/g, "\\$1");
 	}
-};
+}
 module.exports = abstract;
