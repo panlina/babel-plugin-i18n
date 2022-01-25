@@ -35,4 +35,4 @@ module.exports = function (file, language) {
 		updateDictionaryDirectory(file, language);
 	else
 		updateDictionary(file, language);
-}
+};

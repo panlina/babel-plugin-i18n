@@ -56,4 +56,4 @@ module.exports = function (file, language) {
 	else
 		// `generateDictionary`可能返回`true`，原因见上
 		return generateDictionary(file, language);
-}
+};

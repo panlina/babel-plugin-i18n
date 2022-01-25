@@ -45,4 +45,4 @@ module.exports = function (file, language) {
 	else
 		var [m, n] = generateReport(file, language);
 	return [m, n];
-}
+};

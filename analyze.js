@@ -106,6 +106,6 @@ module.exports = function ({ types: t }) {
 				)
 					path.skip();
 			}
-		},
+		}
 	};
 };
