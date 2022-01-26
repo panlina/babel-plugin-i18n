@@ -1,37 +1,37 @@
 i18n = {
 	language: undefined,
 	translator: {},
-	t(language, path, type, text, expression, Component, props) {
+	t(language, path, key, type, text, expression, Component, props) {
 		switch (type) {
 			case 'StringLiteral':
-				var translation = translate(language, path, text) ?? text;
+				var translation = translate(language, path, key, text) ?? text;
 				var component = parse(translation);
 				// fill in references for untranslated text
 				if (translation == text) fillInReferences(component);
 				var component = evaluate(component);
 				return component[0];
 			case 'TemplateLiteral':
-				var translation = translate(language, path, text) ?? text;
+				var translation = translate(language, path, key, text) ?? text;
 				var component = parse(translation);
 				if (translation == text) fillInReferences(component);
 				var component = evaluate(component);
 				return component.map((c, i) => i & 1 ? `${c}` : c).join('');
 			case 'JSXElement':
-				var translation = translate(language, path, text) ?? text;
+				var translation = translate(language, path, key, text) ?? text;
 				var component = parse(translation);
 				if (translation == text) fillInReferences(component);
 				var component = evaluate(component);
 				return React.createElement(Component, props, component);
 			case 'JSXFragment':
-				var translation = translate(language, path, text) ?? text;
+				var translation = translate(language, path, key, text) ?? text;
 				var component = parse(translation);
 				if (translation == text) fillInReferences(component);
 				var component = evaluate(component);
 				return React.createElement(React.Fragment, {}, component);
 		}
-		function translate(language, path, text) {
+		function translate(language, path, key, text) {
 			if (typeof i18n.translator[language] == 'object')
-				return lookup(language, path, text);
+				return lookup(language, path, key, text);
 			else if (typeof i18n.translator[language] == 'function')
 				return i18n.translator[language](text);
 		}
@@ -45,9 +45,10 @@ i18n = {
 				if (i & 1)
 					component[i].index = i >> 1;
 		}
-		function lookup(language, path, text) {
+		function lookup(language, path, key, text) {
 			var [package, path] = path.split(':');
 			var dictionary = i18n.translator[language].dictionary;
+			if (key) return dictionary[`${package}:${path}.i18n.${language}.json`]?.[`:${key}`];
 			var result = dictionary[`${package}:${path}.i18n.${language}.json`]?.[text];
 			if (result != undefined) return result;
 			var component = path.split('/');

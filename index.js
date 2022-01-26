@@ -49,12 +49,9 @@ module.exports = function ({ types: t }) {
 						[
 							t.memberExpression(t.identifier('i18n'), t.identifier('language')),
 							nontext(t.stringLiteral(`${package}:${sourceFileName}`)),
+							path.node['$$i18n.key'] ? t.stringLiteral(path.node['$$i18n.key']) : t.identifier('undefined'),
 							nontext(t.stringLiteral('StringLiteral')),
-							nontext(
-								path.node['$$i18n.key'] ?
-									t.stringLiteral(path.node['$$i18n.key']) :
-									t.stringLiteral(abstract(path.node))
-							)
+							nontext(t.stringLiteral(abstract(path.node)))
 						]
 					);
 				if (path.parent.type == 'JSXAttribute')
@@ -73,12 +70,9 @@ module.exports = function ({ types: t }) {
 						[
 							t.memberExpression(t.identifier('i18n'), t.identifier('language')),
 							nontext(t.stringLiteral(`${package}:${sourceFileName}`)),
+							path.node['$$i18n.key'] ? t.stringLiteral(path.node['$$i18n.key']) : t.identifier('undefined'),
 							nontext(t.stringLiteral('TemplateLiteral')),
-							nontext(
-								path.node['$$i18n.key'] ?
-									t.stringLiteral(path.node['$$i18n.key']) :
-									t.stringLiteral(abstract(path.node))
-							),
+							nontext(t.stringLiteral(abstract(path.node))),
 							t.arrayExpression(path.node.expressions)
 						]
 					)
@@ -100,12 +94,9 @@ module.exports = function ({ types: t }) {
 						[
 							t.memberExpression(t.identifier('i18n'), t.identifier('language')),
 							nontext(t.stringLiteral(`${package}:${sourceFileName}`)),
+							path.node['$$i18n.key'] ? t.stringLiteral(path.node['$$i18n.key']) : t.identifier('undefined'),
 							nontext(t.stringLiteral(path.node.type)),
-							nontext(
-								path.node['$$i18n.key'] ?
-									t.stringLiteral(path.node['$$i18n.key']) :
-									t.stringLiteral(abstract(path.node))
-							),
+							nontext(t.stringLiteral(abstract(path.node))),
 							t.arrayExpression(
 								reduceStringLiteralExpressions(path.node.children)
 									.filter(child => child.type != 'JSXText' && (child.type != 'JSXExpressionContainer' || child.expression.type != 'JSXEmptyExpression'))
