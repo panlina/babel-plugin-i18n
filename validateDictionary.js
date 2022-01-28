@@ -10,6 +10,8 @@ function validateDictionary(file) {
 			diagnostic.push({ type: 'no-change', key: key, file: file });
 		else if (checkCapture(key, value))
 			diagnostic.push({ type: 'capture-index', key: key, file: file });
+		else if (checkCaptureIndexOutOfBounds(key, value))
+			diagnostic.push({ type: 'capture-index-out-of-bounds', key: key, file: file });
 	return diagnostic;
 	/** 检查是不是没有用序号引用变量，只在变量多于一个时检查) */
 	function checkCapture(key, value) {
@@ -18,6 +20,13 @@ function validateDictionary(file) {
 		var components = value.split(/\{([0-9]?)\}/);
 		var [, expressions] = partitionEvenOdd(components);
 		if (expressions.every(expression => !expression))
+			return true;
+	}
+	function checkCaptureIndexOutOfBounds(key, value) {
+		var captureCount = key.split('{}').length - 1;
+		var components = value.split(/\{([0-9]?)\}/);
+		var [, expressions] = partitionEvenOdd(components);
+		if (expressions.some(expression => +expression >= captureCount))
 			return true;
 	}
 }
