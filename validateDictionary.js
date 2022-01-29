@@ -17,16 +17,16 @@ function validateDictionary(file) {
 	function checkCapture(key, value) {
 		var captureCount = key.split('{}').length - 1;
 		if (captureCount <= 1) return;
-		var components = value.split(/\{([0-9]?)\}/);
+		var components = value.split(/(?<!\\)\{((?:[^\\}]|\\\\|\\\})*)(?<!\\)\}/);
 		var [, expressions] = partitionEvenOdd(components);
-		if (expressions.every(expression => !expression))
+		if (expressions.every(expression => isNaN(parseInt(expression))))
 			return true;
 	}
 	function checkCaptureIndexOutOfBounds(key, value) {
 		var captureCount = key.split('{}').length - 1;
-		var components = value.split(/\{([0-9]?)\}/);
+		var components = value.split(/(?<!\\)\{((?:[^\\}]|\\\\|\\\})*)(?<!\\)\}/);
 		var [, expressions] = partitionEvenOdd(components);
-		if (expressions.some(expression => +expression >= captureCount))
+		if (expressions.some(expression => (parseInt(expression) || 0) >= captureCount))
 			return true;
 	}
 }
