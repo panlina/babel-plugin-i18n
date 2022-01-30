@@ -2,31 +2,19 @@ i18n = {
 	language: undefined,
 	translator: {},
 	t(language, path, key, type, text, expression, Component, props) {
+		var translation = translate(language, path, key, text) ?? text;
+		var component = parse(translation);
+		// fill in references for untranslated text
+		if (translation == text) fillInReferences(component);
+		var component = evaluate(component);
 		switch (type) {
 			case 'StringLiteral':
-				var translation = translate(language, path, key, text) ?? text;
-				var component = parse(translation);
-				// fill in references for untranslated text
-				if (translation == text) fillInReferences(component);
-				var component = evaluate(component);
 				return component[0];
 			case 'TemplateLiteral':
-				var translation = translate(language, path, key, text) ?? text;
-				var component = parse(translation);
-				if (translation == text) fillInReferences(component);
-				var component = evaluate(component);
 				return component.map((c, i) => i & 1 ? `${c}` : c).join('');
 			case 'JSXElement':
-				var translation = translate(language, path, key, text) ?? text;
-				var component = parse(translation);
-				if (translation == text) fillInReferences(component);
-				var component = evaluate(component);
 				return React.createElement(Component, props, component);
 			case 'JSXFragment':
-				var translation = translate(language, path, key, text) ?? text;
-				var component = parse(translation);
-				if (translation == text) fillInReferences(component);
-				var component = evaluate(component);
 				return React.createElement(React.Fragment, {}, component);
 		}
 		function translate(language, path, key, text) {
