@@ -10,3 +10,4 @@ npm install @jacklu/babel-plugin-i18n
 # [字典](dictionary.md)
 # [指令](directive.md)
 # [命令行工具](cli.md)
+# [dictionary-loader](dictionary-loader.md)
