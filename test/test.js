@@ -462,6 +462,44 @@ describe('', function () {
 		context.i18n.language = 'en-US';
 		assert.equal(vm.runInContext(result.code, context), "Are you sure you want to delete this message?");
 	});
+	it('key.TemplateLiteral', function () {
+		var result = babel.transformFileSync("./key.TemplateLiteral.js", {
+			plugins: [require('..')]
+		});
+		var object = 'customer', property = 'name';
+		var context = {
+			object: object,
+			property: property
+		};
+		vm.createContext(context);
+		vm.runInContext(runtime, context);
+		context.i18n.translator = translator;
+		context.i18n.language = 'en-US';
+		assert.equal(vm.runInContext(result.code, context), `${property} property of ${object}`);
+	});
+	it('key.JSXElement', function () {
+		var result = babel.transformFileSync("./key.JSXElement.js", {
+			presets: [require('@babel/preset-react')],
+			plugins: [require('..')],
+			parserOpts: { plugins: ['jsx'] }
+		});
+		var object = 'customer', property = 'name';
+		var context = {
+			React: React,
+			object: object,
+			property: property
+		};
+		vm.createContext(context);
+		vm.runInContext(runtime, context);
+		context.i18n.translator = translator;
+		context.i18n.language = 'en-US';
+		assert.deepEqual(
+			vm.runInContext(result.code, context),
+			React.createElement("span", {}, [
+				"", property, " property of ", object, ""
+			])
+		);
+	});
 	it('explicit.key', function () {
 		var result = babel.transformFileSync("./explicit.key.js", {
 			plugins: [require('..')]
