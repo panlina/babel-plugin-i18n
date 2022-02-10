@@ -73,7 +73,7 @@ module.exports = function ({ types: t }) {
 							path.node['$$i18n.key'] ? t.stringLiteral(path.node['$$i18n.key']) : t.identifier('undefined'),
 							nontext(t.stringLiteral('TemplateLiteral')),
 							nontext(t.stringLiteral(abstract(path.node))),
-							t.arrayExpression(path.node.expressions)
+							indexArrayExpression(t.arrayExpression(path.node.expressions))
 						]
 					)
 				);
@@ -97,10 +97,12 @@ module.exports = function ({ types: t }) {
 							path.node['$$i18n.key'] ? t.stringLiteral(path.node['$$i18n.key']) : t.identifier('undefined'),
 							nontext(t.stringLiteral(path.node.type)),
 							nontext(t.stringLiteral(abstract(path.node))),
-							t.arrayExpression(
-								reduceStringLiteralExpressions(path.node.children)
-									.filter(child => child.type != 'JSXText' && (child.type != 'JSXExpressionContainer' || child.expression.type != 'JSXEmptyExpression'))
-									.map(child => child.type == 'JSXExpressionContainer' ? child.expression : child)
+							indexArrayExpression(
+								t.arrayExpression(
+									reduceStringLiteralExpressions(path.node.children)
+										.filter(child => child.type != 'JSXText' && (child.type != 'JSXExpressionContainer' || child.expression.type != 'JSXEmptyExpression'))
+										.map(child => child.type == 'JSXExpressionContainer' ? child.expression : child)
+								)
 							),
 							path.node.type == 'JSXFragment' ?
 								t.identifier('undefined') :
@@ -171,6 +173,26 @@ module.exports = function ({ types: t }) {
 			}
 		}
 	};
+	function indexArrayExpression(arrayExpression) {
+		return t.callExpression(
+			t.memberExpression(t.identifier('i18n'), t.identifier('indexArray')),
+			[
+				arrayExpression,
+				extractIndexMap(arrayExpression.elements)
+			]
+		);
+		function extractIndexMap(expressions) {
+			return t.objectExpression(
+				expressions
+					.map((expression, i) =>
+						t.isSequenceExpression(expression) &&
+						[expression.expressions[0].value, i]
+					)
+					.filter(x => x)
+					.map(([key, i]) => t.objectProperty(t.identifier(key), t.numericLiteral(i)))
+			);
+		}
+	}
 	function nontext(node) {
 		return explicit ? node : skip(node);
 	}

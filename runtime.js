@@ -58,8 +58,8 @@ i18n = {
 				return text.replace(/\\([\\{}])/g, "$1");
 			}
 			function parseReference(text) {
-				var match = text.match(/([0-9]+)?(?:\|map ([^}]+))?/);
-				var index = match[1] != undefined ? +match[1] : 0;
+				var match = text.match(/([0-9]+|(?:[a-zA-Z][a-zA-Z0-9]*))?(?:\|map ([^}]+))?/);
+				var index = match[1] != undefined ? !isNaN(+match[1]) ? +match[1] : match[1] : 0;
 				var map = match[2] != undefined ? parseMap(match[2]) : undefined;
 				return { index: index, map: map };
 			}
@@ -98,7 +98,7 @@ i18n = {
 			}
 		}
 		function evaluate(component) {
-			if (component.some((e, i) => i & 1 && e.index >= expression.length))
+			if (component.some((e, i) => i & 1 && typeof e.index == 'number' && e.index >= expression.length))
 				throw new i18n.IndexOutOfBound();
 			for (var i in component)
 				if (i & 1) {
@@ -145,6 +145,11 @@ i18n = {
 				}
 			}
 		}
+	},
+	indexArray(array, map) {
+		for (var key in map)
+			array[key] = array[map[key]];
+		return array;
 	},
 	IndexOutOfBound: class extends Error {
 		constructor() { super("i18n: translation error: index out of bound."); }

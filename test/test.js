@@ -360,6 +360,44 @@ describe('', function () {
 			);
 		});
 	});
+	it('stringIndex.TemplateLiteral', function () {
+		var result = babel.transformFileSync("./stringIndex.TemplateLiteral.js", {
+			plugins: [require('..')]
+		});
+		var object = 'customer', property = 'name';
+		var context = {
+			object: object,
+			property: property
+		};
+		vm.createContext(context);
+		vm.runInContext(runtime, context);
+		context.i18n.translator = translator;
+		context.i18n.language = 'en-US';
+		assert.equal(vm.runInContext(result.code, context), `${property} property of ${object}`);
+	});
+	it('stringIndex.JSXElement', function () {
+		var result = babel.transformFileSync("./stringIndex.JSXElement.js", {
+			presets: [require('@babel/preset-react')],
+			plugins: [require('..')],
+			parserOpts: { plugins: ['jsx'] }
+		});
+		var object = 'customer', property = 'name';
+		var context = {
+			React: React,
+			object: object,
+			property: property
+		};
+		vm.createContext(context);
+		vm.runInContext(runtime, context);
+		context.i18n.translator = translator;
+		context.i18n.language = 'en-US';
+		assert.deepEqual(
+			vm.runInContext(result.code, context),
+			React.createElement("span", {}, [
+				"", property, " property of ", object, ""
+			])
+		);
+	});
 	describe('escape', function () {
 		it('string literal', function () {
 			var result = babel.transformFileSync("./escape.StringLiteral.js", {
