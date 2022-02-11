@@ -119,8 +119,7 @@ describe('', function () {
 		it('jsx element', function () {
 			var result = babel.transformFileSync("./JSXElement.js", {
 				presets: [require('@babel/preset-react')],
-				plugins: [require('..')],
-				parserOpts: { plugins: ['jsx'] }
+				plugins: [require('..')]
 			});
 			var context = {
 				React: React,
@@ -142,8 +141,7 @@ describe('', function () {
 		it('jsx fragment', function () {
 			var result = babel.transformFileSync("./JSXFragment.js", {
 				presets: [require('@babel/preset-react')],
-				plugins: [require('..')],
-				parserOpts: { plugins: ['jsx'] }
+				plugins: [require('..')]
 			});
 			var context = {
 				React: React,
@@ -165,8 +163,7 @@ describe('', function () {
 		it('{}的{}属性', function () {
 			var result = babel.transformFileSync("./JSXElement.{}的{}属性.js", {
 				presets: [require('@babel/preset-react')],
-				plugins: [require('..')],
-				parserOpts: { plugins: ['jsx'] }
+				plugins: [require('..')]
 			});
 			var object = 'customer', property = 'name';
 			var context = {
@@ -188,8 +185,7 @@ describe('', function () {
 		it('pluralize', function () {
 			var result = babel.transformFileSync("./JSXElement.pluralize.js", {
 				presets: [require('@babel/preset-react')],
-				plugins: [require('..')],
-				parserOpts: { plugins: ['jsx'] }
+				plugins: [require('..')]
 			});
 			var n = 3;
 			var context = {
@@ -223,8 +219,7 @@ describe('', function () {
 		it('jsx fragment pluralize', function () {
 			var result = babel.transformFileSync("./JSXFragment.pluralize.js", {
 				presets: [require('@babel/preset-react')],
-				plugins: [require('..')],
-				parserOpts: { plugins: ['jsx'] }
+				plugins: [require('..')]
 			});
 			var n = 3;
 			var context = {
@@ -258,8 +253,7 @@ describe('', function () {
 		it('string prop', function () {
 			var result = babel.transformFileSync("./JSXElement.stringProp.js", {
 				presets: [require('@babel/preset-react')],
-				plugins: [require('..')],
-				parserOpts: { plugins: ['jsx'] }
+				plugins: [require('..')]
 			});
 			var context = {
 				React: React
@@ -276,8 +270,7 @@ describe('', function () {
 		it('member element', function () {
 			var result = babel.transformFileSync("./JSXElement.memberElement.js", {
 				presets: [require('@babel/preset-react')],
-				plugins: [require('..')],
-				parserOpts: { plugins: ['jsx'] }
+				plugins: [require('..')]
 			});
 			var Radio = { Button: function () { } };
 			var context = {
@@ -296,8 +289,7 @@ describe('', function () {
 		it('jsx empty expression', function () {
 			var result = babel.transformFileSync("./JSXElement.JSXEmptyExpression.js", {
 				presets: [require('@babel/preset-react')],
-				plugins: [require('..')],
-				parserOpts: { plugins: ['jsx'] }
+				plugins: [require('..')]
 			});
 			var context = {
 				React: React,
@@ -319,8 +311,7 @@ describe('', function () {
 		it('space', function () {
 			var result = babel.transformFileSync("./JSXElement.space.js", {
 				presets: [require('@babel/preset-react')],
-				plugins: [require('..')],
-				parserOpts: { plugins: ['jsx'] }
+				plugins: [require('..')]
 			});
 			var context = {
 				React: React
@@ -425,8 +416,7 @@ describe('', function () {
 		it('jsx element', function () {
 			var result = babel.transformFileSync("./escape.JSXElement.js", {
 				presets: [require('@babel/preset-react')],
-				plugins: [require('..')],
-				parserOpts: { plugins: ['jsx'] }
+				plugins: [require('..')]
 			});
 			var name = 'f';
 			var context = {
@@ -447,8 +437,7 @@ describe('', function () {
 		it('jsx fragment', function () {
 			var result = babel.transformFileSync("./escape.JSXFragment.js", {
 				presets: [require('@babel/preset-react')],
-				plugins: [require('..')],
-				parserOpts: { plugins: ['jsx'] }
+				plugins: [require('..')]
 			});
 			var name = 'f';
 			var context = {
@@ -576,8 +565,7 @@ describe('', function () {
 		it('jsx element', function () {
 			var result = babel.transformFileSync("./untranslated.JSXElement.js", {
 				presets: [require('@babel/preset-react')],
-				plugins: [require('..')],
-				parserOpts: { plugins: ['jsx'] }
+				plugins: [require('..')]
 			});
 			var a = "好";
 			var context = {
