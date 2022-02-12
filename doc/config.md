@@ -6,6 +6,8 @@
 
 `include, exclude`，定义要国际化的源文件的glob，使用的是 https://github.com/isaacs/node-glob 的实现。
 
+`instance`，定义i18n全局对象实例的名称。
+
 ## 示例
 
 ```js
@@ -14,6 +16,7 @@ module.exports = {
 	translator: {
 		'en-US': 'dictionary',
 		'zh-TW': require('./zhTWTranslator')
-	}
+	},
+	instance: 'i18n'
 };
 ```

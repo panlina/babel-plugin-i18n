@@ -4,5 +4,6 @@ module.exports = {
 		'en-US': 'dictionary',
 		'zh-TW': require('../zhTWTranslator')
 	},
-	test: require("../containsChinese")
+	test: require("../containsChinese"),
+	instance: 'i18n'
 };

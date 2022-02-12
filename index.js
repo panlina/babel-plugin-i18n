@@ -45,9 +45,9 @@ module.exports = function ({ types: t }) {
 				}
 				var node =
 					t.callExpression(
-						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
+						t.memberExpression(t.identifier(config.instance), t.identifier('t')),
 						[
-							t.memberExpression(t.identifier('i18n'), t.identifier('language')),
+							t.memberExpression(t.identifier(config.instance), t.identifier('language')),
 							nontext(t.stringLiteral(`${package}:${sourceFileName}`)),
 							path.node['$$i18n.key'] ? t.stringLiteral(path.node['$$i18n.key']) : t.identifier('undefined'),
 							nontext(t.stringLiteral('StringLiteral')),
@@ -66,9 +66,9 @@ module.exports = function ({ types: t }) {
 				}
 				path.replaceWith(
 					t.callExpression(
-						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
+						t.memberExpression(t.identifier(config.instance), t.identifier('t')),
 						[
-							t.memberExpression(t.identifier('i18n'), t.identifier('language')),
+							t.memberExpression(t.identifier(config.instance), t.identifier('language')),
 							nontext(t.stringLiteral(`${package}:${sourceFileName}`)),
 							path.node['$$i18n.key'] ? t.stringLiteral(path.node['$$i18n.key']) : t.identifier('undefined'),
 							nontext(t.stringLiteral('TemplateLiteral')),
@@ -90,9 +90,9 @@ module.exports = function ({ types: t }) {
 				}
 				path.replaceWith(
 					t.callExpression(
-						t.memberExpression(t.identifier('i18n'), t.identifier('t')),
+						t.memberExpression(t.identifier(config.instance), t.identifier('t')),
 						[
-							t.memberExpression(t.identifier('i18n'), t.identifier('language')),
+							t.memberExpression(t.identifier(config.instance), t.identifier('language')),
 							nontext(t.stringLiteral(`${package}:${sourceFileName}`)),
 							path.node['$$i18n.key'] ? t.stringLiteral(path.node['$$i18n.key']) : t.identifier('undefined'),
 							nontext(t.stringLiteral(path.node.type)),
@@ -164,7 +164,7 @@ module.exports = function ({ types: t }) {
 			},
 			CallExpression(path) {
 				if (explicit)
-					if (path.node.callee.name == 'i18n')
+					if (path.node.callee.name == config.instance)
 						path.replaceWith(take(
 							path.node.arguments.length <= 1 ?
 								path.node.arguments[0] :
@@ -175,7 +175,7 @@ module.exports = function ({ types: t }) {
 	};
 	function indexArrayExpression(arrayExpression) {
 		return t.callExpression(
-			t.memberExpression(t.identifier('i18n'), t.identifier('indexArray')),
+			t.memberExpression(t.identifier(config.instance), t.identifier('indexArray')),
 			[
 				arrayExpression,
 				extractIndexMap(arrayExpression.elements)
