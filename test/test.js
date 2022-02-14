@@ -566,6 +566,22 @@ describe('', function () {
 		context.i18n.language = 'en-US';
 		assert.equal(vm.runInContext(result.code, context), "Are you sure you want to delete this message?");
 	});
+	it('en-US', function () {
+		var result = babel.transformFileSync("./en-US.js", {
+			plugins: [require('..')]
+		});
+		var n = 3;
+		var context = { n: n, console: console };
+		vm.createContext(context);
+		vm.runInContext(runtime, context);
+		vm.runInContext("i18n = I18n();", context);
+		context.i18n.translator = translator;
+		context.i18n.language = 'en-US';
+		assert.equal(vm.runInContext(result.code, context), `${n} todos left`);
+		n = 1;
+		context.n = n;
+		assert.equal(vm.runInContext(result.code, context), `${n} todo left`);
+	});
 	describe('untranslated', function () {
 		it('string literal', function () {
 			var result = babel.transformFileSync("./untranslated.StringLiteral.js", {
