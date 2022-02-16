@@ -1,4 +1,4 @@
-I18n = function () {
+I18n = function ({ React: React } = {}) {
 	var i18n = {
 		language: undefined,
 		translator: {},
