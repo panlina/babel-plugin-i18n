@@ -133,7 +133,7 @@ describe('', function () {
 			};
 			vm.createContext(context);
 			vm.runInContext(runtime, context);
-			vm.runInContext("i18n = I18n({ React: React });", context);
+			vm.runInContext("i18n = I18n(); i18n.React = React;", context);
 			context.i18n.translator = translator;
 			context.i18n.language = 'en-US';
 			assert.deepEqual(
@@ -156,7 +156,7 @@ describe('', function () {
 			};
 			vm.createContext(context);
 			vm.runInContext(runtime, context);
-			vm.runInContext("i18n = I18n({ React: React });", context);
+			vm.runInContext("i18n = I18n(); i18n.React = React;", context);
 			context.i18n.translator = translator;
 			context.i18n.language = 'en-US';
 			assert.deepEqual(
@@ -181,7 +181,7 @@ describe('', function () {
 			};
 			vm.createContext(context);
 			vm.runInContext(runtime, context);
-			vm.runInContext("i18n = I18n({ React: React });", context);
+			vm.runInContext("i18n = I18n(); i18n.React = React;", context);
 			context.i18n.translator = translator;
 			context.i18n.language = 'en-US';
 			assert.deepEqual(
@@ -204,7 +204,7 @@ describe('', function () {
 			};
 			vm.createContext(context);
 			vm.runInContext(runtime, context);
-			vm.runInContext("i18n = I18n({ React: React });", context);
+			vm.runInContext("i18n = I18n(); i18n.React = React;", context);
 			context.i18n.translator = translator;
 			context.i18n.language = 'en-US';
 			assert.deepEqual(
@@ -239,7 +239,7 @@ describe('', function () {
 			};
 			vm.createContext(context);
 			vm.runInContext(runtime, context);
-			vm.runInContext("i18n = I18n({ React: React });", context);
+			vm.runInContext("i18n = I18n(); i18n.React = React;", context);
 			context.i18n.translator = translator;
 			context.i18n.language = 'en-US';
 			assert.deepEqual(
@@ -271,7 +271,7 @@ describe('', function () {
 			};
 			vm.createContext(context);
 			vm.runInContext(runtime, context);
-			vm.runInContext("i18n = I18n({ React: React });", context);
+			vm.runInContext("i18n = I18n(); i18n.React = React;", context);
 			context.i18n.translator = translator;
 			context.i18n.language = 'en-US';
 			assert.deepEqual(
@@ -291,7 +291,7 @@ describe('', function () {
 			};
 			vm.createContext(context);
 			vm.runInContext(runtime, context);
-			vm.runInContext("i18n = I18n({ React: React });", context);
+			vm.runInContext("i18n = I18n(); i18n.React = React;", context);
 			context.i18n.translator = translator;
 			context.i18n.language = 'en-US';
 			assert.deepEqual(
@@ -310,7 +310,7 @@ describe('', function () {
 			};
 			vm.createContext(context);
 			vm.runInContext(runtime, context);
-			vm.runInContext("i18n = I18n({ React: React });", context);
+			vm.runInContext("i18n = I18n(); i18n.React = React;", context);
 			context.i18n.translator = translator;
 			context.i18n.language = 'en-US';
 			assert.deepEqual(
@@ -332,7 +332,7 @@ describe('', function () {
 			};
 			vm.createContext(context);
 			vm.runInContext(runtime, context);
-			vm.runInContext("i18n = I18n({ React: React });", context);
+			vm.runInContext("i18n = I18n(); i18n.React = React;", context);
 			context.i18n.translator = translator;
 			context.i18n.language = 'en-US';
 			assert.deepEqual(
@@ -354,7 +354,7 @@ describe('', function () {
 			};
 			vm.createContext(context);
 			vm.runInContext(runtime, context);
-			vm.runInContext("i18n = I18n({ React: React });", context);
+			vm.runInContext("i18n = I18n(); i18n.React = React;", context);
 			context.i18n.translator = translator;
 			context.i18n.language = 'en-US';
 			assert.deepEqual(
@@ -397,7 +397,7 @@ describe('', function () {
 		};
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
-		vm.runInContext("i18n = I18n({ React: React });", context);
+		vm.runInContext("i18n = I18n(); i18n.React = React;", context);
 		context.i18n.translator = translator;
 		context.i18n.language = 'en-US';
 		assert.deepEqual(
@@ -445,7 +445,7 @@ describe('', function () {
 			};
 			vm.createContext(context);
 			vm.runInContext(runtime, context);
-			vm.runInContext("i18n = I18n({ React: React });", context);
+			vm.runInContext("i18n = I18n(); i18n.React = React;", context);
 			context.i18n.translator = translator;
 			context.i18n.language = 'en-US';
 			assert.deepEqual(
@@ -467,7 +467,7 @@ describe('', function () {
 			};
 			vm.createContext(context);
 			vm.runInContext(runtime, context);
-			vm.runInContext("i18n = I18n({ React: React });", context);
+			vm.runInContext("i18n = I18n(); i18n.React = React;", context);
 			context.i18n.translator = translator;
 			context.i18n.language = 'en-US';
 			assert.deepEqual(
@@ -544,7 +544,7 @@ describe('', function () {
 		};
 		vm.createContext(context);
 		vm.runInContext(runtime, context);
-		vm.runInContext("i18n = I18n({ React: React });", context);
+		vm.runInContext("i18n = I18n(); i18n.React = React;", context);
 		context.i18n.translator = translator;
 		context.i18n.language = 'en-US';
 		assert.deepEqual(
@@ -620,7 +620,7 @@ describe('', function () {
 			};
 			vm.createContext(context);
 			vm.runInContext(runtime, context);
-			vm.runInContext("i18n = I18n({ React: React });", context);
+			vm.runInContext("i18n = I18n(); i18n.React = React;", context);
 			context.i18n.translator = translator;
 			context.i18n.language = 'en-US';
 			assert.deepEqual(
@@ -685,7 +685,7 @@ describe('', function () {
 				};
 				vm.createContext(context);
 				vm.runInContext(runtime, context);
-				vm.runInContext("i18n = I18n({ React: React });", context);
+				vm.runInContext("i18n = I18n(); i18n.React = React;", context);
 				context.i18n.translator = translator;
 				context.i18n.language = 'en-US';
 				assert.throws(() => {
@@ -704,7 +704,7 @@ describe('', function () {
 				};
 				vm.createContext(context);
 				vm.runInContext(runtime, context);
-				vm.runInContext("i18n = I18n({ React: React });", context);
+				vm.runInContext("i18n = I18n(); i18n.React = React;", context);
 				context.i18n.translator = translator;
 				context.i18n.language = 'en-US';
 				assert.throws(() => {

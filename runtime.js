@@ -1,4 +1,4 @@
-I18n = function ({ React: React } = {}) {
+I18n = function () {
 	var i18n = {
 		language: undefined,
 		translator: {},
@@ -14,9 +14,9 @@ I18n = function ({ React: React } = {}) {
 				case 'TemplateLiteral':
 					return component.map((c, i) => i & 1 ? `${c}` : c).join('');
 				case 'JSXElement':
-					return React.createElement(Component, props, component);
+					return i18n.React.createElement(Component, props, component);
 				case 'JSXFragment':
-					return React.createElement(React.Fragment, {}, component);
+					return i18n.React.createElement(i18n.React.Fragment, {}, component);
 			}
 			function translate(language, path, key, text) {
 				if (typeof i18n.translator[language] == 'object')
