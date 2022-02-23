@@ -25,6 +25,7 @@ module.exports = function ({ types: t }) {
 		},
 		visitor: {
 			Program(path) {
+				if (skip) { path.stop(); return; }
 				// The empty statement is a workaround for the issue that,
 				// when working with webpack,
 				// the inserted require statements will be generated without trailing semicolons,
@@ -51,7 +52,6 @@ module.exports = function ({ types: t }) {
 						)
 					);
 				}
-				if (skip) path.stop();
 			}
 		}
 	};
