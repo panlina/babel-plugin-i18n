@@ -2,6 +2,10 @@ var path = require('path');
 var getDictChain = require('./getDictChain');
 var findUp = require('find-up');
 var minimatch = require('minimatch');
+/**
+ * @param {import("@babel/core")} babel
+ * @returns {import("@babel/core").PluginObj}
+ */
 module.exports = function ({ types: t }) {
 	var translation = {};
 	var config;

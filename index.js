@@ -4,12 +4,17 @@ var findUp = require('find-up');
 var minimatch = require('minimatch');
 var abstract = require('./abstract');
 var reduceStringLiteralExpressions = require('./reduceStringLiteralExpressions');
+/**
+ * @param {import("@babel/core")} babel
+ * @return {import("@babel/core").PluginObj}
+ */
 module.exports = function ({ types: t }) {
 	var config = fs.existsSync("./i18n.config.js") ? require(path.join(process.cwd(), './i18n.config.js')) : {};
 	var sourceFileName;
 	var package;
 	var skipProgram;
 	var explicit;
+	/** @type {import("@babel/core").PluginObj["visitor"]} */
 	var visitor;
 	return {
 		pre(state) {

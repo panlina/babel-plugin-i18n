@@ -4,11 +4,16 @@ var abstract = require('./abstract');
 var lookup = require('./lookup');
 var findUp = require('find-up');
 var minimatch = require('minimatch');
+/**
+ * @param {import("@babel/core")} babel
+ * @returns {import("@babel/core").PluginObj}
+ */
 module.exports = function ({ types: t }) {
 	var SKIP = Symbol('skip');
 	var translation = {};
 	var config;
 	var skip;
+	/** @type {import("@babel/core").PluginObj["visitor"]} */
 	var visitor;
 	return {
 		pre(state) {
