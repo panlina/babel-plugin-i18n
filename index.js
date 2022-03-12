@@ -11,10 +11,10 @@ var reduceStringLiteralExpressions = require('./reduceStringLiteralExpressions')
 module.exports = function ({ types: t }) {
 	/** @type {Config} */
 	var config = fs.existsSync("./i18n.config.js") ? require(path.join(process.cwd(), './i18n.config.js')) : {};
-	var sourceFileName;
-	var package;
-	var skipProgram;
-	var explicit;
+	/** @type {string} */var sourceFileName;
+	/** @type {string} */var package;
+	/** @type {boolean} */var skipProgram;
+	/** @type {boolean} */var explicit;
 	/** @type {import("@babel/core").PluginObj["visitor"]} */
 	var visitor;
 	return {
@@ -132,6 +132,14 @@ module.exports = function ({ types: t }) {
 						]
 					)
 				);
+				/**
+				 * @param {import("@babel/core").types.JSXOpeningElement["name"]} node
+				 * @returns {import("@babel/core").types.StringLiteral | import("@babel/core").types.Identifier}
+				 * @example
+				 * <div> -> "div"
+				 * <A> -> A
+				 * <A.B> -> A.B
+				 */
 				function getComponentFromNode(node) {
 					if (node.type == 'JSXIdentifier')
 						if (node.name.toLowerCase() == node.name)
@@ -179,6 +187,10 @@ module.exports = function ({ types: t }) {
 			}
 		}
 	};
+	/**
+	 * @param {import("@babel/core").types.ArrayExpression} arrayExpression
+	 * @example [a, ("b", b)] -> i18n.indexArray([a, ("b", b)], { b: 1 })
+	 */
 	function indexArrayExpression(arrayExpression) {
 		return t.callExpression(
 			t.memberExpression(t.identifier(config.instance), t.identifier('indexArray')),
@@ -187,6 +199,10 @@ module.exports = function ({ types: t }) {
 				extractIndexMap(arrayExpression.elements)
 			]
 		);
+		/**
+		 * @param {import("@babel/core").types.Expression[]} expressions
+		 * @example [a, ("b", b)] -> { b: 1 }
+		 */
 		function extractIndexMap(expressions) {
 			return t.objectExpression(
 				expressions
@@ -199,17 +215,34 @@ module.exports = function ({ types: t }) {
 			);
 		}
 	}
+	/**
+	 * @template {import("@babel/core").types.StringLiteral} T
+	 * @param {T} node
+	 */
 	function nontext(node) {
 		return explicit ? node : skip(node);
 	}
+	/**
+	 * @template {import("@babel/core").Node} T
+	 * @param {T} node
+	 */
 	function skip(node) {
 		node["$$i18n.skip"] = true;
 		return node;
 	}
+	/**
+	 * @template {import("@babel/core").Node} T
+	 * @param {T} node
+	 */
 	function take(node) {
 		node["$$i18n.take"] = true;
 		return node;
 	}
+	/**
+	 * @template {import("@babel/core").Node} T
+	 * @param {T} node
+	 * @param {string} key
+	 */
 	function key(node, key) {
 		node["$$i18n.key"] = key;
 		return node;
