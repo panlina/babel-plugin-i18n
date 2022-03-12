@@ -6,7 +6,7 @@
 
 `include, exclude`，定义要国际化的源文件的glob，使用的是 https://github.com/isaacs/node-glob 的实现。
 
-`implicit`，是否默认使用implicit模式。
+`explicit`，是否默认使用explicit模式。
 
 `test`，implicit模式下的识别函数，接受字符串，返回该字符串中是否含有本地字符。
 
