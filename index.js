@@ -9,6 +9,7 @@ var reduceStringLiteralExpressions = require('./reduceStringLiteralExpressions')
  * @return {import("@babel/core").PluginObj}
  */
 module.exports = function ({ types: t }) {
+	/** @type {Config} */
 	var config = fs.existsSync("./i18n.config.js") ? require(path.join(process.cwd(), './i18n.config.js')) : {};
 	var sourceFileName;
 	var package;

@@ -8,6 +8,7 @@ var minimatch = require('minimatch');
  */
 module.exports = function ({ types: t }) {
 	var translation = {};
+	/** @type {Config} */
 	var config;
 	var skip;
 	return {

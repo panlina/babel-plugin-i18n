@@ -11,6 +11,7 @@ var minimatch = require('minimatch');
 module.exports = function ({ types: t }) {
 	var SKIP = Symbol('skip');
 	var translation = {};
+	/** @type {Config} */
 	var config;
 	var skip;
 	/** @type {import("@babel/core").PluginObj["visitor"]} */
