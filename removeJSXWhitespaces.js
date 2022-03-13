@@ -1,3 +1,14 @@
+/**
+ * @param {string} text
+ * @example
+ * <div>  我
+ * 	你你  他
+ * 	<div />
+ * 	它它它
+ * </div>
+ * ->
+ * <div>  我 你你  他<div />它它它</div>
+ */
 function removeJSXWhitespaces(text) {
 	var lines = text.split('\n');
 	return lines
