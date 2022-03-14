@@ -7,9 +7,11 @@ var minimatch = require('minimatch');
  * @returns {import("@babel/core").PluginObj}
  */
 module.exports = function ({ types: t }) {
+	/** @type {{ [language: string]: string[] }}*/
 	var translation = {};
 	/** @type {Config} */
 	var config;
+	/** @type {boolean} */
 	var skip;
 	return {
 		pre(state) {
