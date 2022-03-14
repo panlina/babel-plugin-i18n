@@ -1,3 +1,8 @@
+/**
+ * @param {Dictionary} dictionary
+ * @param {string} source
+ * @returns {[translation: string, Dictionary] | undefined}
+*/
 function lookup(dictionary, source) {
 	if (dictionary.hasOwnProperty(source))
 		return [dictionary[source], dictionary];
