@@ -1,7 +1,31 @@
+/** @typedef {import("@types/react").ElementType} ElementType */
+/** @typedef {import("@types/react").ReactNode} ReactNode */
+/**
+ * @typedef {object} DictionaryTranslator
+ * @property {{ [file: string]: Dictionary }} dictionary
+ * @property {(source: string) => string} pluralize
+ * @property {(source: number) => string} ordinalize
+ */
+/** @typedef {(source: string) => string} TranslatorTranslator */
+/** @typedef {DictionaryTranslator | TranslatorTranslator} Translator */
+
 I18n = function () {
 	var i18n = {
+		/** @type {string} */
 		language: undefined,
+		/** @type {{ [language: string]: Translator } } */
 		translator: {},
+		/**
+		 * @param {string} language
+		 * @param {string} path
+		 * @param {string | undefined} key
+		 * @param {'StringLiteral' | 'TemplateLiteral' | 'JSXElement' | 'JSXFragment'} type
+		 * @param {string} text
+		 * @param {any[]} expression
+		 * @param {ElementType} Component
+		 * @param {any} props
+		 * @returns {string | ReactNode}
+		 */
 		t(language, path, key, type, text, expression, Component, props) {
 			var translation = translate(language, path, key, text) ?? text;
 			var component = parse(translation);
@@ -18,14 +42,26 @@ I18n = function () {
 				case 'JSXFragment':
 					return i18n.React.createElement(i18n.React.Fragment, {}, component);
 			}
+
+			/** @typedef {{ index: number | string, map?: { [k: string]: string } }} Reference */
+
+			/**
+			 * @param {string} language
+			 * @param {string} path
+			 * @param {string | undefined} key
+			 * @param {string} text
+			 * @returns {string | undefined}
+			 */
 			function translate(language, path, key, text) {
 				if (typeof i18n.translator[language] == 'object')
 					return lookup(language, path, key, text);
 				else if (typeof i18n.translator[language] == 'function')
 					return i18n.translator[language](text);
 			}
+
 			/**
 			 * Fill in all references with index for untranslated text, so that text is kept verbatim.
+			 * @param {(string | Reference)[]} component
 			 * @example
 			 * "a{}b{}c" -> "a{0}b{1}c"
 			 */
@@ -34,6 +70,14 @@ I18n = function () {
 					if (i & 1)
 						component[i].index = i >> 1;
 			}
+
+			/**
+			 * @param {string} language
+			 * @param {string} path
+			 * @param {string | undefined} key
+			 * @param {string} text
+			 * @returns {string | undefined}
+			 */
 			function lookup(language, path, key, text) {
 				var [package, path] = path.split(':');
 				var dictionary = i18n.translator[language].dictionary;
@@ -47,6 +91,12 @@ I18n = function () {
 					if (result != undefined) return result;
 				}
 			}
+
+			/**
+			 * @param {string} translation
+			 * @example parse("a{1}bb{}ccc") == ["a", { index: 1 }, "bb", { index: 0 }, "ccc"]
+			 * @returns {(string | Reference)[]}
+			 */
 			function parse(translation) {
 				var component = splitTranslation(translation);
 				for (var i in component)
@@ -55,24 +105,45 @@ I18n = function () {
 					else
 						component[i] = unescape(component[i]);
 				return component;
+
+				/** @param {string} text */
 				function unescape(text) {
 					return text.replace(/\\([\\{}])/g, "$1");
 				}
+
+				/**
+				 * @param {string} text
+				 * @returns {Reference}
+				 * @example parseReference("0|map 0->Jan,1->Feb") == { index: 0, map: { 0: "Jan", 1: "Feb" } }
+				 */
 				function parseReference(text) {
 					var match = text.match(/([0-9]+|(?:[a-zA-Z][a-zA-Z0-9]*))?(?:\|map ([^}]+))?/);
 					var index = match[1] != undefined ? !isNaN(+match[1]) ? +match[1] : match[1] : 0;
 					var map = match[2] != undefined ? parseMap(match[2]) : undefined;
 					return { index: index, map: map };
 				}
+
+				/**
+				 * @param {string} text
+				 * @example parseMap("0->Jan,1->Feb") == { 0: "Jan", 1: "Feb" }
+				 */
 				function parseMap(text) {
 					return Object.fromEntries(text.split(',').map(parseEntry));
 				}
+
+				/**
+				 * @param {string} text
+				 * @example parseEntry("0->Jan") == [0, "Jan"]
+				 */
 				function parseEntry(text) {
-					return text.split('->');
+					return /** @type {[string, string]} */(text.split('->'));
 				}
+
 				/**
 				 * RegExp lookbehind may not be supported, so this function is extracted to handle this.
 				 * It uses lookbehind when it's supported, and switch to a less efficient workaround if not.
+				 * @param {string} translation
+				 * @example splitTranslation("a{1}bb{}ccc") == ["a", "1", "bb", "", "ccc"]
 				 */
 				function splitTranslation(translation) {
 					if (!i18n.splitTranslationRegExp)
@@ -92,12 +163,22 @@ I18n = function () {
 							.split(/\}(?!\\)((?:[^\\}]|\\\\|\}\\)*)\{(?!\\)/)
 							.map(reverseString)
 							.reverse();
+
+						/** @param {string} s */
 						function reverseString(s) {
 							return s.split('').reverse().join('');
 						}
 					}
 				}
 			}
+
+			/**
+			 * @param {(string | Reference)[]} component
+			 * @returns {(string | any)[]}
+			 * @example
+			 * // expression == ["Jack"];
+			 * evaluate(["Hello, ", { index: 0 }, ""]) == ["Hello, ", "Jack"]
+			 */
 			function evaluate(component) {
 				if (component.some((e, i) => i & 1 && typeof e.index == 'number' && e.index >= expression.length))
 					throw new i18n.IndexOutOfBound();
@@ -112,6 +193,8 @@ I18n = function () {
 				ordinalize(component);
 				return component;
 			}
+
+			/** @param {(string | any)[]} component */
 			function pluralize(component) {
 				for (var i in component) {
 					if (i & 1) continue;
@@ -133,6 +216,8 @@ I18n = function () {
 					}
 				}
 			}
+
+			/** @param {(string | any)[]} component */
 			function ordinalize(component) {
 				for (var i in component) {
 					if (i & 1) continue;
@@ -147,6 +232,7 @@ I18n = function () {
 				}
 			}
 		},
+		/** @example indexArray(["a", "b"], { b: 1 }) == ["a", "b", b: "b"] */
 		indexArray(array, map) {
 			for (var key in map)
 				array[key] = array[map[key]];
@@ -160,7 +246,11 @@ I18n = function () {
 		},
 		MissingOrdinal: class extends Error {
 			constructor() { super("i18n: translation error: missing ordinal."); }
-		}
+		},
+		/** @type {import("react")} */
+		React: undefined,
+		/** @type {RegExp | undefined} */
+		splitTranslationRegExp: undefined
 	};
 	i18n = Object.assign(x => x, i18n);
 	return i18n;
